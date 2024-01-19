@@ -1,6 +1,8 @@
 import DigestClient from "digest-fetch"
+import dotenv from 'dotenv';
+dotenv.config();
 
-const client = new DigestClient('PUPHAX', 'puphax');
+const client = new DigestClient(process.env.SOAP_USERNAME, process.env.SOAP_PASSWORD);
 
 const xmlData = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
    <soapenv:Header/>

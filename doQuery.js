@@ -1,22 +1,21 @@
 import mysql from 'mysql2/promise';
-// import dotenv from 'dotenv';
-// dotenv.config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const doQuery = async (queryText) => {
-    // const queryText = 'John';
     try {
         const pool = mysql.createPool({
             host: 'localhost',
             user: 'root',
             database: 'testdb',
-            // password: process.env.DB_PASSWORD
-            password: 'mysql'
+            password: process.env.DB_PASSWORD,
         });
         const [results] = await pool.execute(
-            'SELECT * FROM `test_table` WHERE `name` = ?',
+            'UPDATE `test_table` SET `name` = ? WHERE `id` = 2',
+            // 'SELECT * FROM `test_table` WHERE `name` = ?',
             [queryText]
         );
-        if (!results || !results.length) {
+        if (!results) {
             throw new Error(`No results found.`);
         }
         return results;
