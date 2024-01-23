@@ -1,6 +1,6 @@
-import { makeRequest } from "./makeRequest.js";
-import { parseResponse } from "./parseResponse.js";
-import { doQuery } from "./doQuery.js";
+import { makeRequest } from './makeRequest.js';
+import { parseResponse } from './parseResponse.js';
+import { doQuery } from './doQuery.js';
 
 const responseText = await makeRequest();
 // // console.log(responseText);

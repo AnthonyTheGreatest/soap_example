@@ -67,7 +67,7 @@ export const doQuery = async data => {
       throw new Error(`No results found.`);
     }
     await pool.end();
-    console.log(results[0].count);
+    // console.log(results[0].count);
     return results[0].count;
   } catch (error) {
     console.error('Query error:', error);
