@@ -4,9 +4,9 @@ import { doQuery } from "./doQuery.js";
 
 const responseText = await makeRequest();
 // // console.log(responseText);
-const elementText = parseResponse(responseText);
-// // console.log(elementText);
-const queryResult = await doQuery(elementText);
+const responseData = parseResponse(responseText);
+// console.log(responseData);
+const queryResult = await doQuery(responseData);
 // const queryResult = await doQuery('lorazepam');
 console.log(queryResult);
-process.exit(0);
+// process.exit(0);

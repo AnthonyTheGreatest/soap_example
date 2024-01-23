@@ -9,11 +9,26 @@ const xmlData = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soa
    <soapenv:Body>
       <pup:COBJALAP-TABATCInput>
           <pup:SXFILTER-VARCHAR2-IN>
+            <![CDATA[
+                <alapfilter>
+                <ATC>N05BA%</ATC>
+                <ATCNEV>loraze%</ATCNEV>
+                </alapfilter>
+            ]]>
+          </pup:SXFILTER-VARCHAR2-IN>
+      </pup:COBJALAP-TABATCInput>
+   </soapenv:Body>
+</soapenv:Envelope>`;
+
+const xmlDatafULL = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pup:COBJALAP-TABATCInput>
+          <pup:SXFILTER-VARCHAR2-IN>
               <![CDATA[
                 <alapfilter>
-				<ATC>N05BA%</ATC>
-				<ATCNEV>loraze%</ATCNEV>
-	    		 </alapfilter>
+				<ATC>%</ATC>
+	    		</alapfilter>
               ]]>
           </pup:SXFILTER-VARCHAR2-IN>
       </pup:COBJALAP-TABATCInput>
