@@ -10,7 +10,7 @@
 import DigestClient from 'digest-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
-import {data} from './dataAlapTablak.js';
+// import {data} from './dataAlapTablak.js';
 
 const client = new DigestClient(
   process.env.SOAP_USERNAME,
@@ -39,4 +39,4 @@ export const makeRequest = async ({SOAPAction, xmlData}) => {
   }
 };
 
-console.log(await makeRequest(data.ATCKONYV));
+// console.log(await makeRequest(data.ATCKONYV));
