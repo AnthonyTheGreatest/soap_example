@@ -2,6 +2,7 @@
 
 export const data = {
     ATCKONYV: {
+        name: 'ATCKONYV',
         SOAPAction: 'TABATC',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
@@ -20,6 +21,7 @@ export const data = {
         columns: ['ATC', 'HATOANYAG', 'MEGNEV']
     },
     ISOKONYV: {
+        name: 'ISOKONYV',
         SOAPAction: 'TABISO',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
@@ -38,6 +40,7 @@ export const data = {
         columns: ['ISO', 'MEGNEVEZES'] // 3. 'oszlop' üres
     },
     BNOKODOK: {
+        name: 'BNOKODOK',
         SOAPAction: 'TABBNO',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
@@ -56,6 +59,7 @@ export const data = {
         columns: ['ID', 'KOD', 'LEIRAS']
     },
     BRAND: {
+        name: 'BRAND',
         SOAPAction: 'TABBRAND',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
@@ -74,6 +78,7 @@ export const data = {
         columns: ['ID', 'NEV'] // 3. 'oszlop' üres
     },
     CEGEK: {
+        name: 'CEGEK',
         SOAPAction: 'TABCEGEK',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
