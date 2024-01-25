@@ -1,13 +1,13 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
-import { data } from './dataAlapTablak.js';
+// import { data } from './dataAlapTablak.js';
 
-const exampleData = [
-  { id: 'a', name: 'John', x: 'a' },
-  { id: 'b', name: 'Alice', x: 'b' },
-  { id: 'c', name: 'Bob', x: 'c' },
-];
+// const exampleData = [
+//   { id: 'a', name: 'John', x: 'a' },
+//   { id: 'b', name: 'Alice', x: 'b' },
+//   { id: 'c', name: 'Bob', x: 'c' },
+// ];
 
 export const doQuery = async (responseData, table) => {
   if (!responseData || !responseData.length) {
@@ -42,7 +42,7 @@ export const doQuery = async (responseData, table) => {
       throw new Error(`No results found.`);
     }
     await pool.end();
-    console.log(results[0].count);
+    // console.log(results[0].count);
     return results[0].count;
   } catch (error) {
     console.log('Error executing query:', error.message);
@@ -50,4 +50,4 @@ export const doQuery = async (responseData, table) => {
   }
 };
 
-doQuery(exampleData, data.ATCKONYV);
+// doQuery(exampleData, data.ATCKONYV);

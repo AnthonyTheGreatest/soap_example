@@ -7,6 +7,6 @@ const responseText = await makeRequest(data.ATCKONYV);
 // console.log(responseText);
 const responseData = parseResponse(responseText, data.ATCKONYV);
 // console.log(responseData);
-const queryResult = await doQuery(responseData);
+const queryResult = await doQuery(responseData, data.ATCKONYV);
 console.log(queryResult);
 // process.exit(0);

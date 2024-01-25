@@ -1,12 +1,3 @@
-// •	TabATC ATC tábla lekérdezése,
-// •	TabISO ISO tábla lekérdezése,
-// •	TabBNO  BNO tábla lekérdezése,
-// •	TabBrand BRAND tábla lekérdezése,
-// •	TabCegek CEGEK tábla lekérdezése,
-// •	TabKiintOr KIINTOR tábla lekérdezése,
-// •	TabOSzakKep SZAKVKODOK tábla lekérdezése,
-// •	TabOrvKep ORVOSOK tábla lekérdezése.
-
 import DigestClient from 'digest-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
