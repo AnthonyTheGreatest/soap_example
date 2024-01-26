@@ -35,7 +35,10 @@ export const doQuery = async (responseData, table) => {
       const insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
       const countQuery = `SELECT COUNT(*) as count FROM ${name}`;
       break;
-    case 'ISOKONYV':
+    // case 'ISOKONYV':
+    default:
+      console.log('No query defined for this table.');
+      return;
   }
   ////////////////////////////////
   const pool = mysql.createPool({
