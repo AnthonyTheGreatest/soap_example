@@ -17,10 +17,13 @@ export const doQuery = async (responseData, table) => {
   const { name, columns } = table;
   ////////////////////////////////
   //   Unique queries based on table name
+  let insertQuery, countQuery;
   switch (name) {
+    // 3 columns, same table:
     case 'ATCKONYV':
-    case 'BNOKODOK':
+    // case 'BNOKODOK':
     case 'NICHE':
+      // case 'ISOKONYV':
       const valuesToInsert = responseData
         .map(
           row =>
@@ -30,12 +33,26 @@ export const doQuery = async (responseData, table) => {
         )
         .join(', ');
       const insertionColumns = `(${columns.join(', ')})`;
-      //   console.log(columns.join(', '));
+      //   console.log(insertionColumns);
       //   console.log(valuesToInsert);
-      const insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
-      const countQuery = `SELECT COUNT(*) as count FROM ${name}`;
+      insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
+      countQuery = `SELECT COUNT(*) as count FROM ${name}`;
       break;
-    // case 'ISOKONYV':
+    // TODO: Check if this is correct:
+    case 'ISOKONYV':
+      const valuesToInsert2 = responseData
+        .map(row => {
+          const filteredValues = Object.values(row).filter(value => value !== '-/-');
+          const sqlValues = filteredValues.map(value => (typeof value === 'string' ? `'${value}'` : value));
+          return `(${sqlValues.join(', ')})`;
+        })
+        .join(', ');
+      const insertionColumns2 = `(${columns.join(', ')})`;
+        // console.log(insertionColumns2);
+        // console.log(valuesToInsert2);
+      insertQuery = `INSERT INTO ${name} ${insertionColumns2} VALUES ${valuesToInsert2}`;
+      countQuery = `SELECT COUNT(*) as count FROM ${name}`;
+      break;
     default:
       console.log('No query defined for this table.');
       return;
