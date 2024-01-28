@@ -21,7 +21,7 @@ export const doQuery = async (responseData, table) => {
   switch (name) {
     // 3 columns, same table:
     case 'ATCKONYV':
-    // case 'BNOKODOK':
+    case 'BNOKODOK':
     case 'NICHE':
       // case 'ISOKONYV':
       const valuesToInsert = responseData
@@ -38,7 +38,6 @@ export const doQuery = async (responseData, table) => {
       insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
       countQuery = `SELECT COUNT(*) as count FROM ${name}`;
       break;
-    // TODO: Check if this is correct:
     case 'ISOKONYV':
       const valuesToInsert2 = responseData
         .map(row => {

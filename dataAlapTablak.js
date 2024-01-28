@@ -39,6 +39,7 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['ISO', 'MEGNEVEZES'] // 3. 'oszlop' üres
     },
+    // LAPOZAS? max 10 000:
     BNOKODOK: {
         name: 'BNOKODOK',
         SOAPAction: 'TABBNO',
@@ -50,6 +51,7 @@ export const data = {
                             <![CDATA[
                                 <alapfilter>
                                     <BNO>%</BNO>
+                                    <LAPOZAS>1:500</LAPOZAS>
                                 </alapfilter>
                             ]]>
                         </pup:SXFILTER-VARCHAR2-IN>
