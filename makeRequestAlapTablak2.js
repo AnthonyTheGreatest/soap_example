@@ -26,7 +26,6 @@ export const makeRequest = async ({ SOAPAction, xmlData }) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const buffer = await response.arrayBuffer();
-    console.log(buffer);
     const decoder = new TextDecoder('iso-8859-2');
     const decoded = decoder.decode(buffer);
     return decoded;

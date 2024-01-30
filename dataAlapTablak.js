@@ -1,7 +1,7 @@
 // TODO: Finish data obj.
 
 export const data = {
-    ATCKONYV: {
+    ATCKONYV: { // kész
         name: 'ATCKONYV',
         SOAPAction: 'TABATC',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -12,6 +12,7 @@ export const data = {
                             <![CDATA[
                                 <alapfilter>
                                     <ATC>%</ATC>
+                                    <LAPOZAS>x</LAPOZAS>
                                 </alapfilter>
                             ]]>
                         </pup:SXFILTER-VARCHAR2-IN>
@@ -20,7 +21,7 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['ATC', 'HATOANYAG', 'MEGNEV']
     },
-    ISOKONYV: {
+    ISOKONYV: { // kész
         name: 'ISOKONYV',
         SOAPAction: 'TABISO',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -39,8 +40,7 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['ISO', 'MEGNEVEZES'] // 3. 'oszlop' üres
     },
-    // LAPOZAS? max 10 000:
-    BNOKODOK: {
+    BNOKODOK: { // LAPOZAS? max 10 000
         name: 'BNOKODOK',
         SOAPAction: 'TABBNO',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -61,6 +61,9 @@ export const data = {
         columns: ['ID', 'KOD', 'LEIRAS']
     },
     BRAND: {
+        // makeRequest eredménye:
+        // <BODY>
+        // <br><H1>Tisztelt Felhasználó! </H1><br><br><H2> Kérését később tudjuk kiszolgálni. Kérjük,<br> ismételje meg kérését!</H2></BODY>
         name: 'BRAND',
         SOAPAction: 'TABBRAND',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -96,7 +99,7 @@ export const data = {
                     </pup:COBJALAP-TABCEGEKInput>
                     </soapenv:Body>
                 </soapenv:Envelope>`,
-        columns: ['ID', 'NEV', 'ERV_KEZD+ERV_VEGE'] // 3.'oszlop': CEGEK.ERV_KEZD és CEGEK.ERV_VEGE oszlopokból képezett karakterlánc, amely a következő alakú: ’2009.03.21-2014.12.31’
+        columns: ['ID', 'NEV', 'ERV_KEZD', 'ERV_VEGE'] // 3.'oszlop': CEGEK.ERV_KEZD és CEGEK.ERV_VEGE oszlopokból képezett karakterlánc, amely a következő alakú: ’2009.03.21-2014.12.31’
     },
     KIINTOR: {
         name: 'KIINTOR',
@@ -115,7 +118,7 @@ export const data = {
                     </pup:COBJALAP-TABKIINTORInput>
                     </soapenv:Body>
                 </soapenv:Envelope>`,
-        columns: ['ID', 'INTEZET+EGYSEG', 'PECSETKOD'] // 2. 'oszlop': KIINTOR.INTEZET és KIINTOR.EGYSEG mező tartalma összefűzve egy | (pipe) karakterrel
+        columns: ['ID', 'INTEZET', 'EGYSEG', 'PECSETKOD'] // 2. 'oszlop': KIINTOR.INTEZET és KIINTOR.EGYSEG mező tartalma összefűzve egy | (pipe) karakterrel
     },
     SZAKVKODOK: {
         name: 'SZAKVKODOK',
@@ -134,7 +137,7 @@ export const data = {
                     </pup:COBJALAP-TABOSZAKKEPInput>
                     </soapenv:Body>
                 </soapenv:Envelope>`,
-        columns: ['KOD', 'LEIRAS', '???'] // 3. 'oszlop': milyen (korábbi) szakképesítésnek felel meg, a korábbi KOD-ot tartalmazza
+        columns: ['KOD', 'LEIRAS', 'MEGFELEL'] // 3. 'oszlop': milyen (korábbi) szakképesítésnek felel meg, a korábbi KOD-ot tartalmazza
     },
     ORVOSOK: {
         name: 'ORVOSOK',
@@ -146,6 +149,7 @@ export const data = {
                         <pup:SXFILTER-VARCHAR2-IN>
                             <![CDATA[
                                 <alapfilter>
+                                    <PECSET>544%</PECSET>
                                     <SZKOD>%</SZKOD>
                                 </alapfilter>
                             ]]>
@@ -155,7 +159,7 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['orvosok.PECSETKOD', 'szakvkodok.KOD', 'szakvkodok.LEIRAS'] // ...
     },
-    NICHE: {
+    NICHE: { // kész
         name: 'NICHE',
         SOAPAction: 'TABNICHE',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
