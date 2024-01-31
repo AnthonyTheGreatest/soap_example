@@ -12,7 +12,6 @@ export const data = {
                             <![CDATA[
                                 <alapfilter>
                                     <ATC>%</ATC>
-                                    <LAPOZAS>x</LAPOZAS>
                                 </alapfilter>
                             ]]>
                         </pup:SXFILTER-VARCHAR2-IN>
@@ -50,8 +49,8 @@ export const data = {
                         <pup:SXFILTER-VARCHAR2-IN>
                             <![CDATA[
                                 <alapfilter>
-                                    <BNO>%</BNO>
-                                    <LAPOZAS>1:500</LAPOZAS>
+                                    <BNO>F43%</BNO>
+                                    <BNONEV>%stressz%</BNONEV>                
                                 </alapfilter>
                             ]]>
                         </pup:SXFILTER-VARCHAR2-IN>

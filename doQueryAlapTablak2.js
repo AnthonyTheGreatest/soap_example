@@ -25,7 +25,37 @@ export const doQuery = async (responseData, table) => {
   let insertQuery, countQuery;
   switch (name) {
     case 'ATCKONYV':
+      const valuesToInsert8 = responseData
+        .map(
+          row =>
+            `(${Object.values(row)
+              .map(value => `'${value}'`)
+              .join(', ')})`
+        )
+        .join(', ');
+      const insertionColumns8 = `(${columns.join(', ')})`;
+      // console.log(insertionColumns8);
+      // console.log(valuesToInsert8);
+      insertQuery = `INSERT INTO ${name} ${insertionColumns8} VALUES ${valuesToInsert8}`;
+      countQuery = `SELECT COUNT(*) as count FROM ${name}`;
+      break;
     case 'BNOKODOK':
+      const valuesToInsert9 = responseData
+        .map(row => {
+          const values = Object.values(row);
+          let newValues = [];
+          newValues.push(parseInt(values[0]));
+          newValues.push(`'${values[1]}'`);
+          newValues.push(`'${values[2]}'`);
+          return `(${newValues.join(', ')})`;
+        })
+        .join(', ');
+      const insertionColumns9 = `(${columns.join(', ')})`;
+      // console.log(insertionColumns9);
+      // console.log(valuesToInsert9);
+      insertQuery = `INSERT INTO ${name} ${insertionColumns9} VALUES ${valuesToInsert9}`;
+      countQuery = `SELECT COUNT(*) as count FROM ${name}`;
+      break;
     case 'NICHE':
       const valuesToInsert = responseData
         .map(
@@ -63,17 +93,11 @@ export const doQuery = async (responseData, table) => {
     case 'BRAND':
       const valuesToInsert2 = responseData
         .map(row => {
-          const filteredValues = Object.values(row).filter(
-            value => value !== '-/-' && value !== ''
-          );
-          const sqlValues = filteredValues.map(
-            value => {
-              const parsedValue = parseInt(value);
-              return isNaN(parsedValue) ? `'${value}'` : parsedValue;
-            }
-            // typeof value === 'string' ? `'${value}'` : value
-          );
-          return `(${sqlValues.join(', ')})`;
+          const values = Object.values(row);
+          let newValues = [];
+          newValues.push(parseInt(values[0]));
+          newValues.push(`'${values[1].replace(/'/g, "''")}'`); // escape single quotes in string
+          return `(${newValues.join(', ')})`;
         })
         .join(', ');
       const insertionColumns2 = `(${columns.join(', ')})`;
@@ -89,7 +113,7 @@ export const doQuery = async (responseData, table) => {
           let newValues = [];
           const [ERV_KEZD, ERV_VEGE] = values[2].split('-');
           newValues.push(parseInt(values[0]));
-          newValues.push(`'${values[1]}'`);
+          newValues.push(`'${values[1].replace(/'/g, "''")}'`); // escape single quotes in string
           newValues.push(`'${ERV_KEZD}'`);
           newValues.push(`'${ERV_VEGE}'`);
           return `(${newValues.join(', ')})`;
