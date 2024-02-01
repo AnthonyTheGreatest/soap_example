@@ -1,7 +1,8 @@
-// TODO: Finish data obj.
-
+// makeRequest eredménye:
+// <BODY>
+// <br><H1>Tisztelt Felhasználó! </H1><br><br><H2> Kérését később tudjuk kiszolgálni. Kérjük,<br> ismételje meg kérését!</H2></BODY>
 export const data = {
-    ATCKONYV: { // kész
+    ATCKONYV: {
         name: 'ATCKONYV',
         SOAPAction: 'TABATC',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -20,7 +21,7 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['ATC', 'HATOANYAG', 'MEGNEV']
     },
-    ISOKONYV: { // kész
+    ISOKONYV: {
         name: 'ISOKONYV',
         SOAPAction: 'TABISO',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -60,9 +61,6 @@ export const data = {
         columns: ['ID', 'KOD', 'LEIRAS']
     },
     BRAND: {
-        // makeRequest eredménye:
-        // <BODY>
-        // <br><H1>Tisztelt Felhasználó! </H1><br><br><H2> Kérését később tudjuk kiszolgálni. Kérjük,<br> ismételje meg kérését!</H2></BODY>
         name: 'BRAND',
         SOAPAction: 'TABBRAND',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -158,7 +156,7 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['orvosok.PECSETKOD', 'szakvkodok.KOD', 'szakvkodok.LEIRAS'] // ...
     },
-    NICHE: { // kész
+    NICHE: {
         name: 'NICHE',
         SOAPAction: 'TABNICHE',
         xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">

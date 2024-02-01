@@ -1,3 +1,5 @@
+// Works with accented letters.
+
 import DigestClient from 'digest-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -7,40 +9,9 @@ const client = new DigestClient(
   process.env.SOAP_PASSWORD
 );
 
-const xmlData = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <pup:COBJALAP-TABATCInput>
-          <pup:SXFILTER-VARCHAR2-IN>
-            <![CDATA[
-                <alapfilter>
-                <ATC>N05BA%</ATC>
-                <ATCNEV>loraze%</ATCNEV>
-                </alapfilter>
-            ]]>
-          </pup:SXFILTER-VARCHAR2-IN>
-      </pup:COBJALAP-TABATCInput>
-   </soapenv:Body>
-</soapenv:Envelope>`;
-
-const xmlDatafULL = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <pup:COBJALAP-TABATCInput>
-          <pup:SXFILTER-VARCHAR2-IN>
-              <![CDATA[
-                <alapfilter>
-				<ATC>%</ATC>
-	    		</alapfilter>
-              ]]>
-          </pup:SXFILTER-VARCHAR2-IN>
-      </pup:COBJALAP-TABATCInput>
-   </soapenv:Body>
-</soapenv:Envelope>`;
-
 const url = 'https://puphax.neak.gov.hu/PUPHAXWS';
 
-export const makeRequest = async () => {
+export const makeRequest = async ({ SOAPAction, xmlData }) => {
   try {
     const response = await client.fetch(url, {
       method: 'POST',
@@ -48,16 +19,18 @@ export const makeRequest = async () => {
       headers: {
         'Accept-Encoding': 'gzip,deflate',
         'Content-Type': 'text/xml;charset=UTF-8',
-        SOAPAction: 'TABATC',
+        SOAPAction: SOAPAction,
       },
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return response.text();
+    const buffer = await response.arrayBuffer();
+    const decoder = new TextDecoder('iso-8859-2');
+    const decoded = decoder.decode(buffer);
+    return decoded;
+    // return response.text();
   } catch (error) {
     console.log('Error making the request:', error);
   }
 };
-
-// console.log(await makeRequest());
