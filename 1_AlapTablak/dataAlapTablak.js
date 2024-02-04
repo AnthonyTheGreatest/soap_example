@@ -58,6 +58,21 @@ export const data = {
                     </pup:COBJALAP-TABBNOInput>
                     </soapenv:Body>
                 </soapenv:Envelope>`,
+        // xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+        //                 <soapenv:Header/>
+        //                 <soapenv:Body>
+        //                 <pup:COBJALAP-TABBNOInput>
+        //                     <pup:SXFILTER-VARCHAR2-IN>
+        //                         <![CDATA[
+        //                             <alapfilter>
+        //                                 <BNO>%</BNO>
+        //                                 <LAPOZAS>1:5</LAPOZAS>                
+        //                             </alapfilter>
+        //                         ]]>
+        //                     </pup:SXFILTER-VARCHAR2-IN>
+        //                 </pup:COBJALAP-TABBNOInput>
+        //                 </soapenv:Body>
+        //             </soapenv:Envelope>`,
         columns: ['ID', 'KOD', 'LEIRAS']
     },
     BRAND: {

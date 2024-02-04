@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 const processData = async (table) => {
   const responseText = await makeRequest(table);
-  // console.log(responseText);
+//   console.log(responseText);
   const responseData = parseResponse(responseText, table);
   // console.log(responseData);
   const queryResult = await doQuery(pool, responseData, table);

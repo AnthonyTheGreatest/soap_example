@@ -10,6 +10,9 @@ export const doQuery = async (pool, responseData, table) => {
     return;
   }
   const { name, columns } = table;
+  if (name === 'TERMEK_ID_LIST') {
+    return;
+  }
   ////////////////////////////////
   let valuesToInsert, insertionColumns;
   switch (name) {
@@ -26,11 +29,26 @@ export const doQuery = async (pool, responseData, table) => {
         .join(', ');
       insertionColumns = `(${columns.join(', ')})`;
       break;
+    case 'TERMEK':
+      valuesToInsert = responseData.map(row => {
+        const values = Object.values(row);
+        let newValues = [];
+        values.forEach(value => {
+          if (typeof value === 'string') {
+            newValues.push(`'${value}'`);
+          } else {
+            newValues.push(value);
+          }
+        });
+        return `(${newValues.join(', ')})`;
+      });
+      insertionColumns = `(${columns.join(', ')})`;
+      break;
     default:
       console.log('No query defined for this table.');
       return;
   }
-    // console.log(valuesToInsert);
+  // console.log(valuesToInsert);
   //   console.log(insertionColumns);
   const insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
   const countQuery = `SELECT COUNT(*) as count FROM ${name}`;
