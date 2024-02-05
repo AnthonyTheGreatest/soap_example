@@ -35,9 +35,22 @@ export const doQuery = async (pool, responseData, table) => {
         let newValues = [];
         values.forEach(value => {
           if (typeof value === 'string') {
-            newValues.push(`'${value}'`);
+            if (
+              value === '-/-' ||
+              value === '-/' ||
+              value === '-' ||
+              value === '2099-12-31'
+            ) {
+              newValues.push('NULL');
+            } else {
+              newValues.push(`'${value}'`);
+            }
           } else {
-            newValues.push(value);
+            if (value === 999999999.999999) {
+              newValues.push('NULL');
+            } else {
+              newValues.push(value);
+            }
           }
         });
         return `(${newValues.join(', ')})`;
@@ -49,7 +62,7 @@ export const doQuery = async (pool, responseData, table) => {
       return;
   }
   // console.log(valuesToInsert);
-  //   console.log(insertionColumns);
+  // console.log(insertionColumns);
   const insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
   const countQuery = `SELECT COUNT(*) as count FROM ${name}`;
   try {
