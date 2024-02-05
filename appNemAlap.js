@@ -14,20 +14,36 @@ export const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
 });
 
+const idList = [];
+
 const processData = async table => {
   const responseText = await makeRequest(table);
   // console.log(responseText);
   const responseData = parseResponse(responseText, table);
+  if (table.name === 'TERMEK_ID_LIST') idList.push(...responseData);
   // console.log(responseData);
   const queryResult = await doQuery(pool, responseData, table);
   if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
 };
 
-// processData(data.KIHIRDETES);
-// processData(data.TERMEK_ID_LIST);
-processData(data.TERMEK);
+const processTermekIdList = async () => {
+  for (const id of idList) {
+    const responseText = await makeRequest({ SOAPAction: data.TERMEK.SOAPAction, xmlData: data.TERMEK.xmlData(id)});
+    const responseData = parseResponse(responseText, data.TERMEK);
+    await doQuery(pool, responseData, data.TERMEK);
+  }
+  console.log('Done');
+};
+
+
+// await processData(data.KIHIRDETES);
+await processData(data.TERMEK_ID_LIST); //await is needed
+// processData(data.TERMEK);
 // processData(data.EUPONTOK);
+await processTermekIdList();
 // pool.end();
+
+console.log(idList);
 
 // (async () => {
 //     try {

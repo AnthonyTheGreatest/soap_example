@@ -39,11 +39,11 @@ export const data = {
   TERMEK: {
     name: 'TERMEK',
     SOAPAction: 'TERMEKADAT',
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData: id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                   <pup:COBJTERMEKADAT-TERMEKADATInput>
-                      <pup:NID-NUMBER-IN>14714225</pup:NID-NUMBER-IN>
+                      <pup:NID-NUMBER-IN>${id}</pup:NID-NUMBER-IN>
                   </pup:COBJTERMEKADAT-TERMEKADATInput>
                 </soapenv:Body>
             </soapenv:Envelope>
@@ -108,3 +108,14 @@ export const data = {
     columns: [],
   },
 };
+
+// export const termekXML = id => {
+//   return `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+//             <soapenv:Header/>
+//             <soapenv:Body>
+//             <pup:COBJTERMEKADAT-TERMEKADATInput>
+//                 <pup:NID-NUMBER-IN>${id}</pup:NID-NUMBER-IN>
+//             </pup:COBJTERMEKADAT-TERMEKADATInput>
+//             </soapenv:Body>
+//         </soapenv:Envelope>`;
+// };

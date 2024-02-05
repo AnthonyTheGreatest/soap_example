@@ -31,10 +31,12 @@ export const doQuery = async (pool, responseData, table) => {
       break;
     case 'TERMEK':
       valuesToInsert = responseData.map(row => {
-        const values = Object.values(row);
+        const elements = Object.entries(row); // Object.prototype.entries()
         let newValues = [];
-        values.forEach(value => {
-          if (typeof value === 'string') {
+        elements.forEach(([key, value]) => {
+          if (key === 'ERV_VEGE' && value === '2099-12-31') {
+            newValues.push(`'${value}'`); // (NOT NULL)
+          } else if (typeof value === 'string') {
             if (
               value === '-/-' ||
               value === '-/' ||
