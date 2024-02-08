@@ -31,9 +31,31 @@ export const doQuery = async (pool, responseData, table) => {
       break;
     case 'TERMEK':
       valuesToInsert = responseData.map(row => {
-        const elements = Object.entries(row); // Object.prototype.entries()
         let newValues = [];
-        elements.forEach(([key, value]) => {
+        // const elements = Object.entries(row);
+        // elements.forEach(([key, value]) => {
+        //   if (key === 'ERV_VEGE' && value === '2099-12-31') {
+        //     newValues.push(`'${value}'`); // (NOT NULL)
+        //   } else if (typeof value === 'string') {
+        //     if (
+        //       value === '-/-' ||
+        //       value === '-/' ||
+        //       value === '-' ||
+        //       value === '2099-12-31'
+        //     ) {
+        //       newValues.push('NULL');
+        //     } else {
+        //       newValues.push(`'${value}'`);
+        //     }
+        //   } else {
+        //     if (value === 999999999.999999) {
+        //       newValues.push('NULL');
+        //     } else {
+        //       newValues.push(value);
+        //     }
+        //   }
+        // });
+        for (const [key, value] of Object.entries(row)) {
           if (key === 'ERV_VEGE' && value === '2099-12-31') {
             newValues.push(`'${value}'`); // (NOT NULL)
           } else if (typeof value === 'string') {
@@ -54,7 +76,7 @@ export const doQuery = async (pool, responseData, table) => {
               newValues.push(value);
             }
           }
-        });
+        }
         return `(${newValues.join(', ')})`;
       });
       insertionColumns = `(${columns.join(', ')})`;

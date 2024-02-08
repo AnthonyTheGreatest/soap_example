@@ -17,3 +17,5 @@ const iso = results[0].latest;
 const date = new Date(iso);
 date.setDate(date.getDate() + 1);
 export const latestUpdate = date.toISOString().split('T')[0];
+
+export const today = new Date().toISOString().split('T')[0];

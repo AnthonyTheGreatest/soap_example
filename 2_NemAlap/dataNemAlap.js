@@ -39,7 +39,8 @@ export const data = {
   TERMEK: {
     name: 'TERMEK',
     SOAPAction: 'TERMEKADAT',
-    xmlData: id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData:
+      id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                   <pup:COBJTERMEKADAT-TERMEKADATInput>
@@ -94,28 +95,103 @@ export const data = {
       'FORGALOMBAN',
     ],
   },
-  EUPONTOK: {
-    name: 'EUPONTOK',
+  TAMALAP_KATEGTAM_ETC: {
+    name: 'TAMALAP_KATEGTAM_ETC',
+    SOAPAction: 'TAMOGATADAT',
+    xmlData:
+      id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+                <soapenv:Header/>
+                <soapenv:Body>
+                  <pup:COBJTAMOGAT-TAMOGATADATInput>
+                      <pup:DSP-DATE-IN>${latestUpdate}</pup:DSP-DATE-IN>
+                      <pup:NID-NUMBER-IN>${id}</pup:NID-NUMBER-IN>
+                  </pup:COBJTAMOGAT-TAMOGATADATInput>
+                </soapenv:Body>
+            </soapenv:Envelope>
+            `,
+    columns: [
+      [
+        'ID',
+        'TERMEK_ID',
+        'ERV_KEZD',
+        'ERV_VEGE',
+        'TERMAR',
+        'NKAR',
+        'FAN',
+        'FAB',
+        'MAXFAB',
+        'AFA',
+        'NTK',
+        'EGYSEGAR',
+        'BESOROLAS',
+        'PRAS_TERMEK',
+        'NICHE_ID',
+        'KEST_TERM',
+        'KGYKERET',
+        'KULONL100',
+      ],
+      [
+        'ID',
+        'KATEGORIA', // TAMALAP_ID missing
+        'TAMTECHN',
+        'KGYIRHATO',
+        'MIN_ELETKOR',
+        'MAX_ELETKOR',
+        'NEM',
+        'TAMSZAZ',
+        'FIX_ID',
+        'REFNTK',
+        'NTAM',
+        'BTAM',
+        'TERDIJ',
+        'NTKTD',
+        'MIHAID',
+        'MIHACEL',
+        'MIHASTAT',
+        'KIHI',
+        'FELME',
+        'EUPONTAZON', // <- extra (EUHOZZAR.EUPONT_ID)
+      ],
+    ],
+  },
+  EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR: {
+    name: 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR',
     SOAPAction: 'TAMOGATEUPONT',
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData:
+      id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                 <pup:COBJEUPONT-TAMOGATEUPONTInput>
-                    <pup:NID-NUMBER-IN>76255</pup:NID-NUMBER-IN>
+                    <pup:NID-NUMBER-IN>${id}</pup:NID-NUMBER-IN>
                 </pup:COBJEUPONT-TAMOGATEUPONTInput>
                 </soapenv:Body>
             </soapenv:Envelope>`,
-    columns: [],
+    columns: [
+      [
+        'ID',
+        'PONTSZAM',
+        'PERJELZES',
+        'FELIRAS',
+        'MEGJEGYZES'
+      ],
+      [
+        'NDX',
+        'LEIRAS'
+      ],
+      [
+        'BNO_ID'
+      ],
+      [
+        'KATEGORIA_ID',
+        'JOGOSULT_ID',
+        'JIDOKORLAT',
+        'SZAKVKOD',
+        'KIINT_ID'
+      ]
+    ],
   },
+  INKVALT: {
+    name: 'INKVALT',
+    SOAPAction: 'INKVALT',
+  }
 };
-
-// export const termekXML = id => {
-//   return `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
-//             <soapenv:Header/>
-//             <soapenv:Body>
-//             <pup:COBJTERMEKADAT-TERMEKADATInput>
-//                 <pup:NID-NUMBER-IN>${id}</pup:NID-NUMBER-IN>
-//             </pup:COBJTERMEKADAT-TERMEKADATInput>
-//             </soapenv:Body>
-//         </soapenv:Envelope>`;
-// };

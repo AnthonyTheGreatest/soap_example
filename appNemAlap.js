@@ -40,7 +40,7 @@ const processTermekIdList = async () => {
 await processData(data.TERMEK_ID_LIST); //await is needed
 // processData(data.TERMEK);
 // processData(data.EUPONTOK);
-await processTermekIdList();
+// await processTermekIdList();
 // pool.end();
 
 console.log(idList);
