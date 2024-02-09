@@ -3,7 +3,15 @@ import { DOMParser } from '@xmldom/xmldom';
 export const parseResponse = (responseText, { name, columns }) => {
   const xmlDoc = new DOMParser().parseFromString(responseText, 'text/xml');
   let data;
-  // const valuesToIntOrString 
+  // Returns an array of node name and node value as a number or string
+  const myParser = node => {
+    const nodeName = node.nodeName;
+    const nodeContent = node.textContent;
+    const nodeValue = isNaN(Number(nodeContent))
+      ? nodeContent
+      : Number(nodeContent);
+    return [nodeName, nodeValue];
+  };
   switch (name) {
     case 'KIHIRDETES':
       data = Array.from(xmlDoc.getElementsByTagName('OBJKIHIRDELEM')).map(
@@ -45,19 +53,23 @@ export const parseResponse = (responseText, { name, columns }) => {
         }
       );
       break;
-    case 'TAMALAP_KATEGTAM_ETC':
+    case 'TAMALAP_KATEGTAM_EUHOZZAR':
       data = [[]];
-      const element = Array.from(xmlDoc.getElementsByTagName('OBJTAMOGAT'))[0];
+      const tamogatadatElement = Array.from(
+        xmlDoc.getElementsByTagName('OBJTAMOGAT')
+      )[0];
       // TAMALAP:
       const tamalap = {};
-      Array.from(element.childnodes).forEach(node => {
-        if (node.nodeName === 'TAMOGATASOK') {
+      let tamalapId;
+      Array.from(tamogatadatElement.childnodes).forEach(node => {
+        const [name, value] = myParser(node);
+        if (name === 'TAMOGATASOK') {
           return;
         }
-        const nodeValue = node.textContent;
-        tamalap[node.nodeName] = isNaN(Number(nodeValue))
-          ? nodeValue
-          : Number(nodeValue);
+        if (name === 'ID') {
+          tamalapId = value;
+        }
+        tamalap[name] = value;
       });
       data[0].push(tamalap);
       // KATEGTAM:
@@ -66,21 +78,49 @@ export const parseResponse = (responseText, { name, columns }) => {
       ).map(row => {
         const rowObject = {};
         Array.from(row.childNodes).forEach(node => {
-          const nodeValue = node.textContent;
-          rowObject[node.nodeName] = isNaN(Number(nodeValue))
-            ? nodeValue
-            : Number(nodeValue);
+          const [name, value] = myParser(node);
+          rowObject[name] = value;
         });
+        // Add TAMALAP_ID to each row
+        rowObject['TAMALAP_ID'] = tamalapId;
         return rowObject;
       });
       data.push(kategtam);
-      // TODO: ETC
+      // EUHOZZAR:
+      const euhozzar = [];
+      Array.from(xmlDoc.getElementsByTagName('OBJKATEGTAM')).forEach(
+        kategtam => {
+          const euhozzarObj = {};
+          euhozzarObj['KATEGTAM_ID'] = kategtam.firstChild.textContent;
+          const offlabelNumber = Number(kategtam.querySelector('OFFLABEL').textContent);
+          const eupontazonArr = [];
+          Array.from(kategtam.querySelector('EUPONTAZON').childNodes).forEach(node => {
+            const innerNode = node.firstChild;
+            const [, value] = myParser(innerNode);
+            eupontazonArr.push(value);
+          });
+          if (!eupontazonArr.length) {
+            euhozzarObj['EUPONTAZON'] = null;
+            euhozzarObj['OFFLABEL'] = NaN(offlabelNumber) ? null : offlabelNumber;
+            euhozzar.push(euhozzarObj);
+            return;
+          }
+          eupontazonArr.forEach(id => {
+            euhozzarObj['EUPONT_ID'] = id;
+            euhozzarObj['OFFLABEL'] = NaN(offlabelNumber) ? null : offlabelNumber;
+            euhozzar.push(euhozzarObj);
+          });
+        }
+      );
+      data.push(euhozzar);
       break;
     case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
       data = {};
       data.eupontok = {};
-      const eupontArr = Arry.from(xmlDoc.querySelector('OBJEUPONT').childNodes);
-      eupontArr.forEach(node => {
+      const objeupontChildren = Arry.from(
+        xmlDoc.querySelector('OBJEUPONT').childNodes
+      );
+      objeupontChildren.forEach(node => {
         if (
           node.nodeName !== 'INDIKACIOK' ||
           node.nodeName !== 'FELIRBNO' ||

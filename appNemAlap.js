@@ -28,22 +28,24 @@ const processData = async table => {
 
 const processTermekIdList = async () => {
   for (const id of idList) {
-    const responseText = await makeRequest({ SOAPAction: data.TERMEK.SOAPAction, xmlData: data.TERMEK.xmlData(id)});
+    const responseText = await makeRequest({
+      SOAPAction: data.TERMEK.SOAPAction,
+      xmlData: data.TERMEK.xmlData(id),
+    });
     const responseData = parseResponse(responseText, data.TERMEK);
     await doQuery(pool, responseData, data.TERMEK);
   }
   console.log('Done');
 };
 
-
 // await processData(data.KIHIRDETES);
-await processData(data.TERMEK_ID_LIST); //await is needed
+// await processData(data.TERMEK_ID_LIST); //await is needed
 // processData(data.TERMEK);
 // processData(data.EUPONTOK);
 // await processTermekIdList();
 // pool.end();
 
-console.log(idList);
+// console.log(idList);
 
 // (async () => {
 //     try {

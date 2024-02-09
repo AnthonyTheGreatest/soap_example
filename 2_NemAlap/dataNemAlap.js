@@ -95,8 +95,8 @@ export const data = {
       'FORGALOMBAN',
     ],
   },
-  TAMALAP_KATEGTAM_ETC: {
-    name: 'TAMALAP_KATEGTAM_ETC',
+  TAMALAP_KATEGTAM_EUHOZZAR: {
+    name: 'TAMALAP_KATEGTAM_EUHOZZAR',
     SOAPAction: 'TAMOGATADAT',
     xmlData:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
@@ -132,7 +132,7 @@ export const data = {
       ],
       [
         'ID',
-        'KATEGORIA', // TAMALAP_ID missing
+        'KATEGORIA',
         'TAMTECHN',
         'KGYIRHATO',
         'MIN_ELETKOR',
@@ -150,8 +150,14 @@ export const data = {
         'MIHASTAT',
         'KIHI',
         'FELME',
-        'EUPONTAZON', // <- extra (EUHOZZAR.EUPONT_ID)
+        'TAMALAP_ID' // added when parsing
       ],
+      [
+        'EUPONT_ID' // (EUHOZZAR.EUPONT_ID)
+      ],
+      [
+        'OFFLABEL' // (EUHOZZAR.OFFLABEL)
+      ]
     ],
   },
   EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR: {
