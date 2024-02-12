@@ -21,9 +21,9 @@ const processData = async table => {
   // console.log(responseText);
   const responseData = parseResponse(responseText, table);
   if (table.name === 'TERMEK_ID_LIST') idList.push(...responseData);
-  // console.log(responseData);
-  const queryResult = await doQuery(pool, responseData, table);
-  if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
+  console.log(responseData);
+  // const queryResult = await doQuery(pool, responseData, table);
+  // if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
 };
 
 const processTermekIdList = async () => {
@@ -42,8 +42,10 @@ const processTermekIdList = async () => {
 // await processData(data.TERMEK_ID_LIST); //await is needed
 // processData(data.TERMEK);
 // processData(data.EUPONTOK);
+await processData(data.TAMALAP_KATEGTAM_EUHOZZAR);
 // await processTermekIdList();
-// pool.end();
+pool.end();
+process.exit();
 
 // console.log(idList);
 

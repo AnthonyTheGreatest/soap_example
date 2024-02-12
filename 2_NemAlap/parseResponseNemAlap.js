@@ -12,6 +12,15 @@ export const parseResponse = (responseText, { name, columns }) => {
       : Number(nodeContent);
     return [nodeName, nodeValue];
   };
+  // const myParser = node => {
+  //   if (node.nodeType !== 1) return [null, null]; // Skip text nodes (?)
+  //   const nodeName = node.nodeName;
+  //   const nodeContent = node.textContent;
+  //   const nodeValue = isNaN(Number(nodeContent))
+  //     ? nodeContent
+  //     : Number(nodeContent);
+  //   return [nodeName, nodeValue];
+  // };
   switch (name) {
     case 'KIHIRDETES':
       data = Array.from(xmlDoc.getElementsByTagName('OBJKIHIRDELEM')).map(
@@ -61,7 +70,8 @@ export const parseResponse = (responseText, { name, columns }) => {
       // TAMALAP:
       const tamalap = {};
       let tamalapId;
-      Array.from(tamogatadatElement.childnodes).forEach(node => {
+      Array.from(tamogatadatElement.childNodes).forEach(node => {
+        if (node.nodeType !== 1) return; // Parse only element nodes
         const [name, value] = myParser(node);
         if (name === 'TAMOGATASOK') {
           return;
@@ -78,6 +88,7 @@ export const parseResponse = (responseText, { name, columns }) => {
       ).map(row => {
         const rowObject = {};
         Array.from(row.childNodes).forEach(node => {
+          if (node.nodeType !== 1) return; // Parse only element nodes
           const [name, value] = myParser(node);
           rowObject[name] = value;
         });
@@ -92,22 +103,34 @@ export const parseResponse = (responseText, { name, columns }) => {
         kategtam => {
           const euhozzarObj = {};
           euhozzarObj['KATEGTAM_ID'] = kategtam.firstChild.textContent;
-          const offlabelNumber = Number(kategtam.querySelector('OFFLABEL').textContent);
+          const offlabelNumber = Number(
+            kategtam.getElementsByTagName('OFFLABEL')[0].textContent
+          );
+          // const offlabelElement = kategtam.querySelector('OFFLABEL');
+          // const offlabelNumber = offlabelElement ? Number(offlabelElement.textContent) : null;
           const eupontazonArr = [];
-          Array.from(kategtam.querySelector('EUPONTAZON').childNodes).forEach(node => {
+          Array.from(
+            kategtam.getElementsByTagName('EUPONTAZON')[0].childNodes
+          ).forEach(node => {
             const innerNode = node.firstChild;
+            if (!innerNode) return;
+            if (node.nodeType !== 1) return; // Parse only element nodes
             const [, value] = myParser(innerNode);
             eupontazonArr.push(value);
           });
           if (!eupontazonArr.length) {
             euhozzarObj['EUPONTAZON'] = null;
-            euhozzarObj['OFFLABEL'] = NaN(offlabelNumber) ? null : offlabelNumber;
+            euhozzarObj['OFFLABEL'] = isNaN(offlabelNumber)
+              ? null
+              : offlabelNumber;
             euhozzar.push(euhozzarObj);
             return;
           }
           eupontazonArr.forEach(id => {
             euhozzarObj['EUPONT_ID'] = id;
-            euhozzarObj['OFFLABEL'] = NaN(offlabelNumber) ? null : offlabelNumber;
+            euhozzarObj['OFFLABEL'] = isNaN(offlabelNumber)
+              ? null
+              : offlabelNumber;
             euhozzar.push(euhozzarObj);
           });
         }
@@ -118,7 +141,7 @@ export const parseResponse = (responseText, { name, columns }) => {
       data = {};
       data.eupontok = {};
       const objeupontChildren = Arry.from(
-        xmlDoc.querySelector('OBJEUPONT').childNodes
+        xmlDoc.getElementsByTagName('OBJEUPONT')[0].childNodes
       );
       objeupontChildren.forEach(node => {
         if (

@@ -98,7 +98,17 @@ export const data = {
   TAMALAP_KATEGTAM_EUHOZZAR: {
     name: 'TAMALAP_KATEGTAM_EUHOZZAR',
     SOAPAction: 'TAMOGATADAT',
-    xmlData:
+    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+                <soapenv:Header/>
+                <soapenv:Body>
+                  <pup:COBJTAMOGAT-TAMOGATADATInput>
+                      <pup:DSP-DATE-IN>2024-02-01</pup:DSP-DATE-IN>
+                      <pup:NID-NUMBER-IN>60300994</pup:NID-NUMBER-IN>
+                  </pup:COBJTAMOGAT-TAMOGATADATInput>
+                </soapenv:Body>
+            </soapenv:Envelope>
+            `,
+    xmlData2:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -150,14 +160,14 @@ export const data = {
         'MIHASTAT',
         'KIHI',
         'FELME',
-        'TAMALAP_ID' // added when parsing
+        'TAMALAP_ID', // added when parsing
       ],
       [
-        'EUPONT_ID' // (EUHOZZAR.EUPONT_ID)
+        'EUPONT_ID', // (EUHOZZAR.EUPONT_ID)
       ],
       [
-        'OFFLABEL' // (EUHOZZAR.OFFLABEL)
-      ]
+        'OFFLABEL', // (EUHOZZAR.OFFLABEL)
+      ],
     ],
   },
   EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR: {
@@ -173,31 +183,14 @@ export const data = {
                 </soapenv:Body>
             </soapenv:Envelope>`,
     columns: [
-      [
-        'ID',
-        'PONTSZAM',
-        'PERJELZES',
-        'FELIRAS',
-        'MEGJEGYZES'
-      ],
-      [
-        'NDX',
-        'LEIRAS'
-      ],
-      [
-        'BNO_ID'
-      ],
-      [
-        'KATEGORIA_ID',
-        'JOGOSULT_ID',
-        'JIDOKORLAT',
-        'SZAKVKOD',
-        'KIINT_ID'
-      ]
+      ['ID', 'PONTSZAM', 'PERJELZES', 'FELIRAS', 'MEGJEGYZES'],
+      ['NDX', 'LEIRAS'],
+      ['BNO_ID'],
+      ['KATEGORIA_ID', 'JOGOSULT_ID', 'JIDOKORLAT', 'SZAKVKOD', 'KIINT_ID'],
     ],
   },
   INKVALT: {
     name: 'INKVALT',
     SOAPAction: 'INKVALT',
-  }
+  },
 };
