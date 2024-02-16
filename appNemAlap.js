@@ -15,6 +15,7 @@ export const pool = mysql.createPool({
 });
 
 const idList = [];
+const singleTermekIdArr = [60300994];
 
 const processData = async table => {
   const responseText = await makeRequest(table);
@@ -26,24 +27,66 @@ const processData = async table => {
   // if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
 };
 
+// TODO: convert to transaction
 const processTermekIdList = async () => {
-  for (const id of idList) {
-    const responseText = await makeRequest({
+  for (const id of singleTermekIdArr) {
+    // TERMEK:
+    const responseTextTermek = await makeRequest({
       SOAPAction: data.TERMEK.SOAPAction,
       xmlData: data.TERMEK.xmlData(id),
     });
-    const responseData = parseResponse(responseText, data.TERMEK);
-    await doQuery(pool, responseData, data.TERMEK);
+    const responseDataTermek = parseResponse(responseTextTermek, data.TERMEK);
+    // TAMALAP_KATEGTAM_EUHOZZAR:
+    const responseTextTamalap = await makeRequest({
+      SOAPAction: data.TAMALAP_KATEGTAM_EUHOZZAR.SOAPAction,
+      xmlData: data.TAMALAP_KATEGTAM_EUHOZZAR.xmlData(id),
+    });
+    const responseDataTamalap = parseResponse(
+      responseTextTamalap,
+      data.TAMALAP_KATEGTAM_EUHOZZAR
+    );
+    const eupontIdArr = responseDataTamalap[3];
+    // EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR:
+    const responseEupontokArr = [];
+    for (const eupontId of eupontIdArr) {
+      const responseTextEupont = await makeRequest({
+        SOAPAction: data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.SOAPAction,
+        xmlData:
+          data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.xmlData(eupontId),
+      });
+      const responseDataEupont = parseResponse(
+        responseTextEupont,
+        data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
+      );
+      responseEupontokArr.push(responseDataEupont);
+    }
+    // Queries:
+    for (const eupontData of responseEupontokArr) {
+      await doQuery(
+        pool,
+        eupontData,
+        data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
+      );
+    }
+    await doQuery(pool, responseDataTermek, data.TERMEK);
+    await doQuery(pool, responseDataTamalap, data.TAMALAP_KATEGTAM_EUHOZZAR);
   }
   console.log('Done');
 };
 
 // await processData(data.KIHIRDETES);
+
+// Call one after the other:
 // await processData(data.TERMEK_ID_LIST); //await is needed
-// processData(data.TERMEK);
-// processData(data.EUPONTOK);
-await processData(data.TAMALAP_KATEGTAM_EUHOZZAR);
 // await processTermekIdList();
+
+// await processData(data.TAMALAP_KATEGTAM_EUHOZZAR);
+
+await processData(data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR);
+
+// processData(data.TERMEK);
+
+// processData(data.EUPONTOK);
 pool.end();
 process.exit();
 

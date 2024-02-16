@@ -3,7 +3,7 @@ import { DOMParser } from '@xmldom/xmldom';
 export const parseResponse = (responseText, { name, columns }) => {
   const xmlDoc = new DOMParser().parseFromString(responseText, 'text/xml');
   let data;
-  // Returns an array of node name and node value as a number or string
+  // Returns an array of node name, and node value as a number or string
   const myParser = node => {
     const nodeName = node.nodeName;
     const nodeContent = node.textContent;
@@ -12,15 +12,6 @@ export const parseResponse = (responseText, { name, columns }) => {
       : Number(nodeContent);
     return [nodeName, nodeValue];
   };
-  // const myParser = node => {
-  //   if (node.nodeType !== 1) return [null, null]; // Skip text nodes (?)
-  //   const nodeName = node.nodeName;
-  //   const nodeContent = node.textContent;
-  //   const nodeValue = isNaN(Number(nodeContent))
-  //     ? nodeContent
-  //     : Number(nodeContent);
-  //   return [nodeName, nodeValue];
-  // };
   switch (name) {
     case 'KIHIRDETES':
       data = Array.from(xmlDoc.getElementsByTagName('OBJKIHIRDELEM')).map(
@@ -67,6 +58,7 @@ export const parseResponse = (responseText, { name, columns }) => {
       const tamogatadatElement = Array.from(
         xmlDoc.getElementsByTagName('OBJTAMOGAT')
       )[0];
+
       // TAMALAP:
       const tamalap = {};
       let tamalapId;
@@ -90,6 +82,7 @@ export const parseResponse = (responseText, { name, columns }) => {
         Array.from(row.childNodes).forEach(node => {
           if (node.nodeType !== 1) return; // Parse only element nodes
           const [name, value] = myParser(node);
+          if (name === 'EUPONTAZON' || name === 'OFFLABEL') return;
           rowObject[name] = value;
         });
         // Add TAMALAP_ID to each row
@@ -99,91 +92,162 @@ export const parseResponse = (responseText, { name, columns }) => {
       data.push(kategtam);
       // EUHOZZAR:
       const euhozzar = [];
+      // EUPONT ID array put at end of data array (inputs for TAMOGATEUPONT method):
+      const eupontArr = [];
       Array.from(xmlDoc.getElementsByTagName('OBJKATEGTAM')).forEach(
         kategtam => {
           const euhozzarObj = {};
-          euhozzarObj['KATEGTAM_ID'] = kategtam.firstChild.textContent;
-          const offlabelNumber = Number(
-            kategtam.getElementsByTagName('OFFLABEL')[0].textContent
+          // KATEGTAM_ID:
+          const kategtamId = Number(
+            kategtam.getElementsByTagName('ID')[0].textContent
           );
-          // const offlabelElement = kategtam.querySelector('OFFLABEL');
-          // const offlabelNumber = offlabelElement ? Number(offlabelElement.textContent) : null;
+          // EUPONT_ID_arr:
           const eupontazonArr = [];
-          Array.from(
-            kategtam.getElementsByTagName('EUPONTAZON')[0].childNodes
-          ).forEach(node => {
-            const innerNode = node.firstChild;
-            if (!innerNode) return;
-            if (node.nodeType !== 1) return; // Parse only element nodes
-            const [, value] = myParser(innerNode);
-            eupontazonArr.push(value);
-          });
-          if (!eupontazonArr.length) {
-            euhozzarObj['EUPONTAZON'] = null;
-            euhozzarObj['OFFLABEL'] = isNaN(offlabelNumber)
-              ? null
-              : offlabelNumber;
-            euhozzar.push(euhozzarObj);
-            return;
+          const eupontazonElementContainsData = Array.from(
+            kategtam
+              .getElementsByTagName('EUPONTAZON')[0]
+              .getElementsByTagName('OBJSTRING256')
+          ).length;
+          if (eupontazonElementContainsData) {
+            Array.from(
+              kategtam
+                .getElementsByTagName('EUPONTAZON')[0]
+                .getElementsByTagName('OBJSTRING256')
+            ).forEach(eupont => {
+              const value = Number(
+                eupont.getElementsByTagName('SZOVEG')[0].textContent
+              );
+              eupontazonArr.push(value);
+              eupontArr.push(value);
+            });
           }
-          eupontazonArr.forEach(id => {
-            euhozzarObj['EUPONT_ID'] = id;
-            euhozzarObj['OFFLABEL'] = isNaN(offlabelNumber)
-              ? null
-              : offlabelNumber;
-            euhozzar.push(euhozzarObj);
-          });
+          // OFFLABEL_arr:
+          const offlabelArr = [];
+          const offlabelElementContainsData = Array.from(
+            kategtam
+              .getElementsByTagName('EUPONTAZON')[0]
+              .getElementsByTagName('OBJSTRING256')
+          ).length;
+          if (offlabelElementContainsData) {
+            Array.from(
+              kategtam
+                .getElementsByTagName('OFFLABEL')[0]
+                .getElementsByTagName('OBJSTRING256')
+            ).forEach(offlabel => {
+              const value = Number(
+                offlabel.getElementsByTagName('SZOVEG')[0].textContent
+              );
+              offlabelArr.push(value);
+            });
+          }
+          if (!offlabelArr.length) {
+            if (!eupontazonArr.length) {
+              euhozzarObj['KATEGTAM_ID'] = kategtamId;
+              euhozzarObj['EUPONT_ID'] = 0;
+              euhozzarObj['OFFLABEL'] = 0;
+              euhozzar.push(euhozzarObj);
+            } else {
+              eupontazonArr.forEach(id => {
+                euhozzarObj['KATEGTAM_ID'] = kategtamId;
+                euhozzarObj['EUPONT_ID'] = id;
+                euhozzarObj['OFFLABEL'] = 0;
+                euhozzar.push(euhozzarObj);
+              });
+            }
+          } else {
+            const EupontazonWithoutOfflabelArr = eupontazonArr.filter(
+              eupontazon => {
+                return !offlabelArr.includes(eupontazon);
+              }
+            );
+            offlabelArr.forEach(offlabel => {
+              euhozzarObj['KATEGTAM_ID'] = kategtamId;
+              euhozzarObj['EUPONT_ID'] = offlabel;
+              euhozzarObj['OFFLABEL'] = 1;
+              euhozzar.push(euhozzarObj);
+            });
+            EupontazonWithoutOfflabelArr.forEach(noOfflabel => {
+              euhozzarObj['KATEGTAM_ID'] = kategtamId;
+              euhozzarObj['EUPONT_ID'] = noOfflabel;
+              euhozzarObj['OFFLABEL'] = 0;
+              euhozzar.push(euhozzarObj);
+            });
+          }
         }
       );
       data.push(euhozzar);
+      // EUPONT ID array at index 3 in data array (inputs for TAMOGATEUPONT method):
+      data.push(eupontArr);
       break;
     case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
-      data = {};
-      data.eupontok = {};
-      const objeupontChildren = Arry.from(
-        xmlDoc.getElementsByTagName('OBJEUPONT')[0].childNodes
-      );
-      objeupontChildren.forEach(node => {
+      data = [];
+      const tamogateupontElement = Array.from(
+        xmlDoc.getElementsByTagName('OBJEUPONT')
+      )[0];
+      let eupontId;
+      const eupontok = {};
+      Array.from(tamogateupontElement.childNodes).forEach(node => {
+        if (node.nodeType !== 1) return; // Parse only element nodes
+        const [name, value] = myParser(node);
+        // EUPONTOK:
         if (
-          node.nodeName !== 'INDIKACIOK' ||
-          node.nodeName !== 'FELIRBNO' ||
-          node.nodeName !== 'FELIRHAT'
+          name !== 'INDIKACIOK' &&
+          name !== 'FELIRBNO' &&
+          name !== 'FELIRHAT'
         ) {
-          const nodeValue = node.textContent;
-          data.eupontok[node.nodeName] = isNaN(Number(nodeValue))
-            ? nodeValue
-            : Number(nodeValue);
+          if (name === 'ID') {
+            eupontId = value;
+          }
+          eupontok[name] = value;
         }
-        if (node.nodeName === 'INDIKACIOK') {
-          data.euindikaciok = Array.from(node.childNodes).map(row => {
+        // EUINDIKACIOK:
+        if (name === 'INDIKACIOK') {
+          const euindikaciok = Array.from(
+            node.getElementsByTagName('OBJINDIKACIO')
+          ).map(row => {
             const rowObject = {};
+            rowObject['EUPONT_ID'] = eupontId;
             Array.from(row.childNodes).forEach(node => {
-              const nodeValue = node.textContent;
-              rowObject[node.nodeName] = isNaN(Number(nodeValue))
-                ? nodeValue
-                : Number(nodeValue);
+              if (node.nodeType !== 1) return; // Parse only element nodes
+              const [name, value] = myParser(node);
+              rowObject[name] = value;
             });
             return rowObject;
           });
+          data.push(euindikaciok);
         }
-        if (node.nodeName === 'FELIRBNO') {
-          data.bnohozzar = Array.from(node.childNodes).map(row => {
-            return { BNO_ID: row.firstChild.textContent };
+        // BNOHOZZAR:
+        if (name === 'FELIRBNO') {
+          const bnohozzar = Array.from(
+            node.getElementsByTagName('OBJSTRING256')
+          ).map(row => {
+            const bnoId = row.getElementsByTagName('SZOVEG')[0].textContent;
+            return {
+              EUPONT_ID: eupontId,
+              BNO_ID: bnoId,
+            };
           });
+          data.push(bnohozzar);
         }
-        if (node.nodeName === 'FELIRHAT') {
-          data.eujoghozzar = Array.from(node.childNodes).map(row => {
+        // EUJOGHOZZAR:
+        if (name === 'FELIRHAT') {
+          const eujoghozzar = Array.from(
+            node.getElementsByTagName('OBJFELIRHATOSAG')
+          ).map(row => {
             const rowObject = {};
+            rowObject['EUPONT_ID'] = eupontId;
             Array.from(row.childNodes).forEach(node => {
-              const nodeValue = node.textContent;
-              rowObject[node.nodeName] = isNaN(Number(nodeValue))
-                ? nodeValue
-                : Number(nodeValue);
+              if (node.nodeType !== 1) return; // Parse only element nodes
+              const [name, value] = myParser(node);
+              rowObject[name] = value;
             });
             return rowObject;
           });
+          data.push(eujoghozzar);
         }
       });
+      // Put eupontok at beginning of data array:
+      data.unshift([eupontok]);
       break;
     case 'INKVALT':
       break;

@@ -98,7 +98,7 @@ export const data = {
   TAMALAP_KATEGTAM_EUHOZZAR: {
     name: 'TAMALAP_KATEGTAM_EUHOZZAR',
     SOAPAction: 'TAMOGATADAT',
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData2: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                   <pup:COBJTAMOGAT-TAMOGATADATInput>
@@ -108,7 +108,7 @@ export const data = {
                 </soapenv:Body>
             </soapenv:Envelope>
             `,
-    xmlData2:
+    xmlData:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -120,6 +120,7 @@ export const data = {
             </soapenv:Envelope>
             `,
     columns: [
+      // TAMALAP:
       [
         'ID',
         'TERMEK_ID',
@@ -140,6 +141,7 @@ export const data = {
         'KGYKERET',
         'KULONL100',
       ],
+      // KATEGTAM:
       [
         'ID',
         'KATEGORIA',
@@ -162,18 +164,22 @@ export const data = {
         'FELME',
         'TAMALAP_ID', // added when parsing
       ],
-      [
-        'EUPONT_ID', // (EUHOZZAR.EUPONT_ID)
-      ],
-      [
-        'OFFLABEL', // (EUHOZZAR.OFFLABEL)
-      ],
+      // EUHOZZAR:
+      ['KATEGTAM_ID', 'EUPONT_ID', 'OFFLABEL'],
     ],
   },
   EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR: {
     name: 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR',
     SOAPAction: 'TAMOGATEUPONT',
-    xmlData:
+    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+                <soapenv:Header/>
+                <soapenv:Body>
+                <pup:COBJEUPONT-TAMOGATEUPONTInput>
+                    <pup:NID-NUMBER-IN>99502</pup:NID-NUMBER-IN>
+                </pup:COBJEUPONT-TAMOGATEUPONTInput>
+                </soapenv:Body>
+            </soapenv:Envelope>`,
+    xmlData2:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -183,10 +189,26 @@ export const data = {
                 </soapenv:Body>
             </soapenv:Envelope>`,
     columns: [
+      // EUPONTOK:
       ['ID', 'PONTSZAM', 'PERJELZES', 'FELIRAS', 'MEGJEGYZES'],
-      ['NDX', 'LEIRAS'],
-      ['BNO_ID'],
-      ['KATEGORIA_ID', 'JOGOSULT_ID', 'JIDOKORLAT', 'SZAKVKOD', 'KIINT_ID'],
+      // EUINDIKACIOK:
+      // + auto incremented id
+      // EUPONT_ID added when parsing
+      ['EUPONT_ID', 'NDX', 'LEIRAS'],
+      // BNOHOZZAR:
+      // EUPONT_ID added when parsing
+      ['EUPONT_ID', 'BNO_ID'],
+      // EUJOGHOZZAR:
+      // + auto incremented id
+      // EUPONT_ID added when parsing
+      [
+        'EUPONT_ID',
+        'KATEGORIA_ID',
+        'JOGOSULT_ID',
+        'JIDOKORLAT',
+        'SZAKVKOD',
+        'KIINT_ID',
+      ],
     ],
   },
   INKVALT: {
