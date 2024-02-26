@@ -202,7 +202,7 @@ export const doQuery = async (pool, responseData, table) => {
       }).join(', ');
       const euindikaciokInsertionColumns = `(${columns[1].join(', ')})`;
       // BNOHOZZAR:
-      const bnohozzarValuesToInsert = [];
+      const bnohozzarValues = [];
       // for loop instead of map to use await inside:
       for (const row of responseData[2]) {
         const newValues = [];
@@ -214,33 +214,57 @@ export const doQuery = async (pool, responseData, table) => {
             const [results] = await connection.execute(
               `SELECT ID as id FROM BNOKODOK WHERE KOD = '${value}'`
             );
-            // TODO: Fill BNOKODOK table for this to work:
             newValues.push(results[0].id);
           }
         }
-        bnohozzarValuesToInsert.push(`(${newValues.join(', ')})`);
+        bnohozzarValues.push(`(${newValues.join(', ')})`);
       }
+      const bnohozzarValuesToInsert = bnohozzarValues.join(', ');
       const bnohozzarInsertionColumns = `(${columns[2].join(', ')})`;
       // EUJOGHOZZAR:
-      const eujoghozzarValuesToInsert = responseData[3].map(row => {
-        let newValues = [];
-        for (const [, value] of Object.entries(row)) {
-          if (
-            value === '-/-' ||
-            value === '-/' ||
-            value === '-' ||
-            value === '2099-12-31' ||
-            value === 999999999.999999
-          ) {
-            newValues.push('NULL');
-          } else if (typeof value === 'string') {
-            newValues.push(`'${value}'`);
+      const eujoghozzarValues = [];
+      // for loop instead of map to use await inside:
+      for (const row of responseData[3]) {
+        const newValues = [];
+        for (const [name, value] of Object.entries(row)) {
+          if (name === 'SZAKVKOD') {
+            const [results] = await connection.execute(
+              `SELECT ID as id FROM SZAKVKODOK WHERE KOD = '${value}'`
+            );
+            newValues.push(results[0].id);
           } else {
             newValues.push(value);
           }
         }
-        return `(${newValues.join(', ')})`;
-      }).join(', ');
+        eujoghozzarValues.push(`(${newValues.join(', ')})`);
+      }
+      const eujoghozzarValuesToInsert = eujoghozzarValues.join(', ');
+      // const eujoghozzarValuesToInsert = responseData[3].map(row => {
+      //   let newValues = [];
+      //   // TODO: szakvkodok.id != szakvkodok.kod
+      //   for (const [name, value] of Object.entries(row)) {
+      //     if (
+      //       value === '-/-' ||
+      //       value === '-/' ||
+      //       value === '-' ||
+      //       value === '2099-12-31' ||
+      //       value === 999999999.999999
+      //     ) {
+      //       newValues.push('NULL');
+      //     } else if (typeof value === 'string') {
+      //       newValues.push(`'${value}'`);
+      //     } else {
+      //       if (name === 'SZAKVKOD') {
+      //         const [results] = await connection.execute(
+      //           `SELECT ID as id FROM SZAKVKODOK WHERE KOD = '${value}'`
+      //         );
+      //         newValues.push(results[0].id);
+      //       }
+      //       newValues.push(value);
+      //     }
+      //   }
+      //   return `(${newValues.join(', ')})`;
+      // }).join(', ');
       const eujoghozzarInsertionColumns = `(${columns[3].join(', ')})`;
       try {
         // Transaction:

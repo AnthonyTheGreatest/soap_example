@@ -207,7 +207,7 @@ export const data = {
         'KATEGORIA_ID',
         'JOGOSULT_ID',
         'JIDOKORLAT',
-        'SZAKVKOD',
+        'SZAKV_ID',
         'KIINT_ID',
       ],
     ],
