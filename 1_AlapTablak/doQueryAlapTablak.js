@@ -31,8 +31,8 @@ export const doQuery = async (pool, responseData, table) => {
           const values = Object.values(row);
           let newValues = [];
           newValues.push(parseInt(values[0]));
-          newValues.push(`'${values[1]}'`);
-          newValues.push(`'${values[2]}'`);
+          newValues.push(`'${values[1].replace(/'/g, "''")}'`); // escape single quotes in string
+          newValues.push(`'${values[2].replace(/'/g, "''")}'`); // escape single quotes in string
           return `(${newValues.join(', ')})`;
         })
         .join(', ');

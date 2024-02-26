@@ -40,39 +40,24 @@ export const data = {
                 </soapenv:Envelope>`,
         columns: ['ISO', 'MEGNEVEZES'] // 3. 'oszlop' üres
     },
-    BNOKODOK: { // LAPOZAS? max 10 000
+    BNOKODOK: {
         name: 'BNOKODOK',
         SOAPAction: 'TABBNO',
-        xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+        // TODO: lapozás
+        xmlData: (num) => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
                     <soapenv:Body>
                     <pup:COBJALAP-TABBNOInput>
                         <pup:SXFILTER-VARCHAR2-IN>
                             <![CDATA[
                                 <alapfilter>
-                                    <BNO>F43%</BNO>
-                                    <BNONEV>%stressz%</BNONEV>                
+                                    <BNO>%${num}</BNO>
                                 </alapfilter>
                             ]]>
                         </pup:SXFILTER-VARCHAR2-IN>
                     </pup:COBJALAP-TABBNOInput>
                     </soapenv:Body>
                 </soapenv:Envelope>`,
-        // xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
-        //                 <soapenv:Header/>
-        //                 <soapenv:Body>
-        //                 <pup:COBJALAP-TABBNOInput>
-        //                     <pup:SXFILTER-VARCHAR2-IN>
-        //                         <![CDATA[
-        //                             <alapfilter>
-        //                                 <BNO>%</BNO>
-        //                                 <LAPOZAS>1:5</LAPOZAS>                
-        //                             </alapfilter>
-        //                         ]]>
-        //                     </pup:SXFILTER-VARCHAR2-IN>
-        //                 </pup:COBJALAP-TABBNOInput>
-        //                 </soapenv:Body>
-        //             </soapenv:Envelope>`,
         columns: ['ID', 'KOD', 'LEIRAS']
     },
     BRAND: {
@@ -154,15 +139,15 @@ export const data = {
     ORVOSOK: {
         name: 'ORVOSOK',
         SOAPAction: 'TABORVKEP',
-        xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+        // TODO: lapozás
+        xmlData: (num) => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
                     <soapenv:Body>
                     <pup:COBJALAP-TABORVKEPInput>
                         <pup:SXFILTER-VARCHAR2-IN>
                             <![CDATA[
                                 <alapfilter>
-                                    <PECSET>544%</PECSET>
-                                    <SZKOD>%</SZKOD>
+                                    <SZKOD>%${num}</SZKOD>
                                 </alapfilter>
                             ]]>
                         </pup:SXFILTER-VARCHAR2-IN>
