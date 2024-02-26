@@ -13,7 +13,8 @@ export const doQuery = async (pool, responseData, table) => {
   if (name === 'TERMEK_ID_LIST') {
     return;
   }
-  ////////////////////////////////
+  // A single connection for transactions:
+  const connection = await pool.getConnection();
   let valuesToInsert, insertionColumns;
   switch (name) {
     case 'KIHIRDETES':
@@ -105,11 +106,11 @@ export const doQuery = async (pool, responseData, table) => {
           }
         }
         return `(${newValues.join(', ')})`;
-      });
+      }).join(', ');
       const kategtamInsertionColumns = `(${columns[1].join(', ')})`;
       // EUHOZZAR:
-      const eupontok = responseData[2];
-      const eupontokValuesToInsert = eupontok.map(row => {
+      const euhozzar = responseData[2];
+      const euhozzarValuesToInsert = euhozzar.map(row => {
         let newValues = [];
         for (const [, value] of Object.entries(row)) {
           if (
@@ -127,10 +128,8 @@ export const doQuery = async (pool, responseData, table) => {
           }
         }
         return `(${newValues.join(', ')})`;
-      });
-      const eupontokInsertionColumns = `(${columns[2].join(', ')})`;
-      // Get connection from pool
-      const connection = await pool.getConnection();
+      }).join(', ');
+      const euhozzarInsertionColumns = `(${columns[2].join(', ')})`;
       try {
         // Transaction:
         await connection.beginTransaction(); // Begin transaction
@@ -142,7 +141,7 @@ export const doQuery = async (pool, responseData, table) => {
           `INSERT INTO KATEGTAM ${kategtamInsertionColumns} VALUES ${kategtamValuesToInsert}`
         );
         await connection.execute(
-          `INSERT INTO EUHOZZAR ${eupontokInsertionColumns} VALUES ${eupontokValuesToInsert}`
+          `INSERT INTO EUHOZZAR ${euhozzarInsertionColumns} VALUES ${euhozzarValuesToInsert}`
         );
 
         await connection.commit(); // Commit transaction
@@ -161,6 +160,120 @@ export const doQuery = async (pool, responseData, table) => {
         );
       }
       break;
+    case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
+      // EUPONTOK:
+      const eupontokValues = [];
+      for (const [, value] of Object.entries(responseData[0][0])) {
+        if (
+          value === '-/-' ||
+          value === '-/' ||
+          value === '-' ||
+          value === '2099-12-31' ||
+          value === 999999999.999999
+        ) {
+          eupontokValues.push('NULL');
+        } else if (typeof value === 'string') {
+          eupontokValues.push(`'${value}'`);
+        } else {
+          eupontokValues.push(value);
+        }
+      }
+      const eupontokValuesToInsert = `(${eupontokValues.join(', ')})`;
+      const eupontokInsertionColumns = `(${columns[0].join(', ')})`;
+      // EUINDIKACIOK:
+      const euindikaciokValuesToInsert = responseData[1].map(row => {
+        let newValues = [];
+        for (const [, value] of Object.entries(row)) {
+          if (
+            value === '-/-' ||
+            value === '-/' ||
+            value === '-' ||
+            value === '2099-12-31' ||
+            value === 999999999.999999
+          ) {
+            newValues.push('NULL');
+          } else if (typeof value === 'string') {
+            newValues.push(`'${value}'`);
+          } else {
+            newValues.push(value);
+          }
+        }
+        return `(${newValues.join(', ')})`;
+      }).join(', ');
+      const euindikaciokInsertionColumns = `(${columns[1].join(', ')})`;
+      // BNOHOZZAR:
+      const bnohozzarValuesToInsert = [];
+      // for loop instead of map to use await inside:
+      for (const row of responseData[2]) {
+        const newValues = [];
+        for (const [name, value] of Object.entries(row)) {
+          if (name === 'EUPONT_ID') {
+            newValues.push(value);
+          }
+          if (name === 'BNO_ID') {
+            const [results] = await connection.execute(
+              `SELECT ID as id FROM BNOKODOK WHERE KOD = '${value}'`
+            );
+            // TODO: Fill BNOKODOK table for this to work:
+            newValues.push(results[0].id);
+          }
+        }
+        bnohozzarValuesToInsert.push(`(${newValues.join(', ')})`);
+      }
+      const bnohozzarInsertionColumns = `(${columns[2].join(', ')})`;
+      // EUJOGHOZZAR:
+      const eujoghozzarValuesToInsert = responseData[3].map(row => {
+        let newValues = [];
+        for (const [, value] of Object.entries(row)) {
+          if (
+            value === '-/-' ||
+            value === '-/' ||
+            value === '-' ||
+            value === '2099-12-31' ||
+            value === 999999999.999999
+          ) {
+            newValues.push('NULL');
+          } else if (typeof value === 'string') {
+            newValues.push(`'${value}'`);
+          } else {
+            newValues.push(value);
+          }
+        }
+        return `(${newValues.join(', ')})`;
+      }).join(', ');
+      const eujoghozzarInsertionColumns = `(${columns[3].join(', ')})`;
+      try {
+        // Transaction:
+        await connection.beginTransaction(); // Begin transaction
+
+        await connection.execute(
+          `INSERT INTO EUPONTOK ${eupontokInsertionColumns} VALUES ${eupontokValuesToInsert}`
+        );
+        await connection.execute(
+          `INSERT INTO EUINDIKACIOK ${euindikaciokInsertionColumns} VALUES ${euindikaciokValuesToInsert}`
+        );
+        await connection.execute(
+          `INSERT INTO BNOHOZZAR ${bnohozzarInsertionColumns} VALUES ${bnohozzarValuesToInsert}`
+        );
+        await connection.execute(
+          `INSERT INTO EUJOGHOZZAR ${eujoghozzarInsertionColumns} VALUES ${eujoghozzarValuesToInsert}`
+        );
+
+        await connection.commit(); // Commit transaction
+
+        const [results] = await connection.execute(
+          'SELECT COUNT(*) as count FROM EUPONTOK'
+        );
+        if (!results) throw new Error('No results found.');
+        // Return number of rows in EUPONTOK table only
+        return results[0].count;
+      } catch (error) {
+        await connection.rollback(); // Rollback transaction if error
+        console.log(
+          'Error executing query (EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR):',
+          error.message
+        );
+      }
     default:
       console.log('No query defined for this table.');
       return;

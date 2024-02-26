@@ -4,6 +4,7 @@ export const data = {
   KIHIRDETES: {
     name: 'KIHIRDETES',
     SOAPAction: 'KIHIRD',
+    // TODO: change date
     xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
                     <soapenv:Body>

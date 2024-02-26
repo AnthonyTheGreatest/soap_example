@@ -22,9 +22,9 @@ const processData = async table => {
   // console.log(responseText);
   const responseData = parseResponse(responseText, table);
   if (table.name === 'TERMEK_ID_LIST') idList.push(...responseData);
-  console.log(responseData);
-  // const queryResult = await doQuery(pool, responseData, table);
-  // if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
+  // console.log(responseData);
+  const queryResult = await doQuery(pool, responseData, table);
+  if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
 };
 
 // TODO: convert to transaction
