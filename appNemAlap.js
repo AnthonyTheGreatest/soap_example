@@ -74,19 +74,24 @@ const processTermekIdList = async () => {
   console.log('Done');
 };
 
+// await processTermekIdList();
+
 // await processData(data.KIHIRDETES);
 
 // Call one after the other:
-// await processData(data.TERMEK_ID_LIST); //await is needed
+// await processData(data.TERMEK_ID_LIST);
 // await processTermekIdList();
 
-// await processData(data.TAMALAP_KATEGTAM_EUHOZZAR);
+// !
+// Call in this order due to foreign key constraints:
+// !
 
-await processData(data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR);
+// await processData(data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR);
 
-// processData(data.TERMEK);
+// await processData(data.TERMEK);
 
-// processData(data.EUPONTOK);
+await processData(data.TAMALAP_KATEGTAM_EUHOZZAR);
+
 pool.end();
 process.exit();
 

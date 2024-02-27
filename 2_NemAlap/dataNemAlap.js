@@ -40,7 +40,17 @@ export const data = {
   TERMEK: {
     name: 'TERMEK',
     SOAPAction: 'TERMEKADAT',
-    xmlData:
+    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+                  <soapenv:Header/>
+                  <soapenv:Body>
+                    <pup:COBJTERMEKADAT-TERMEKADATInput>
+                        <pup:NID-NUMBER-IN>60300994</pup:NID-NUMBER-IN>
+                    </pup:COBJTERMEKADAT-TERMEKADATInput>
+                  </soapenv:Body>
+              </soapenv:Envelope>
+              `,
+    // TODO: change to xmlData:
+    xmlData2:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -99,7 +109,7 @@ export const data = {
   TAMALAP_KATEGTAM_EUHOZZAR: {
     name: 'TAMALAP_KATEGTAM_EUHOZZAR',
     SOAPAction: 'TAMOGATADAT',
-    xmlData2: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                   <pup:COBJTAMOGAT-TAMOGATADATInput>
@@ -109,7 +119,8 @@ export const data = {
                 </soapenv:Body>
             </soapenv:Envelope>
             `,
-    xmlData:
+    // TODO: change to xmlData:
+    xmlData2:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>

@@ -112,7 +112,7 @@ export const doQuery = async (pool, responseData, table) => {
       const euhozzar = responseData[2];
       const euhozzarValuesToInsert = euhozzar.map(row => {
         let newValues = [];
-        for (const [, value] of Object.entries(row)) {
+        for (const [name, value] of Object.entries(row)) {
           if (
             value === '-/-' ||
             value === '-/' ||
@@ -124,6 +124,10 @@ export const doQuery = async (pool, responseData, table) => {
           } else if (typeof value === 'string') {
             newValues.push(`'${value}'`);
           } else {
+            // insetr EUPONT_ID as NULL if 0, due to foreign key constraint:
+            if (name === 'EUPONT_ID' && value === 0) {
+              newValues.push('NULL');
+            }
             newValues.push(value);
           }
         }

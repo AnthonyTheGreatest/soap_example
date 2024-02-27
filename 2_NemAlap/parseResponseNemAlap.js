@@ -143,7 +143,7 @@ export const parseResponse = (responseText, { name, columns }) => {
           if (!offlabelArr.length) {
             if (!eupontazonArr.length) {
               euhozzarObj['KATEGTAM_ID'] = kategtamId;
-              euhozzarObj['EUPONT_ID'] = 0;
+              euhozzarObj['EUPONT_ID'] = 0; // TODO: change to null instead of 0 in insert query
               euhozzarObj['OFFLABEL'] = 0;
               euhozzar.push(euhozzarObj);
             } else {
