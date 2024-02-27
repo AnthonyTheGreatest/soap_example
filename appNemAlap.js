@@ -83,7 +83,7 @@ const processTermekIdList = async () => {
 // await processTermekIdList();
 
 // !
-// Call in this order due to foreign key constraints:
+// Call (with static xmlData) in this order due to foreign key constraints:
 // !
 
 // await processData(data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR);
@@ -96,16 +96,3 @@ pool.end();
 process.exit();
 
 // console.log(idList);
-
-// (async () => {
-//     try {
-//         for (const table in data) {
-//             await processData(data[table]);
-//         }
-//         console.log('Done');
-//     } catch (error) {
-//         console.log('An error occurred during processing:', error.message);
-//     } finally {
-//         pool.end();
-//     }
-// })();

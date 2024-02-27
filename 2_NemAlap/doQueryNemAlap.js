@@ -62,78 +62,99 @@ export const doQuery = async (pool, responseData, table) => {
     case 'TAMALAP_KATEGTAM_EUHOZZAR':
       // TAMALAP:
       const tamalap = responseData[0];
-      const tamalapValuesToInsert = tamalap.map(row => {
-        let newValues = [];
-        for (const [name, value] of Object.entries(row)) {
-          if (
-            value === '-/-' ||
-            value === '-/' ||
-            value === '-' ||
-            value === '2099-12-31' ||
-            value === 999999999.999999
-          ) {
-            if (value === '2099-12-31' && name === 'ERV_VEGE') {
-              newValues.push(`'${value}'`); // (NOT NULL)
+      const tamalapValuesToInsert = tamalap
+        .map(row => {
+          let newValues = [];
+          for (const [name, value] of Object.entries(row)) {
+            if (
+              value === '-/-' ||
+              value === '-/' ||
+              value === '-' ||
+              value === '2099-12-31' ||
+              value === 999999999.999999
+            ) {
+              if (value === '2099-12-31' && name === 'ERV_VEGE') {
+                newValues.push(`'${value}'`); // (NOT NULL)
+              } else {
+                newValues.push('NULL');
+              }
+            } else if (typeof value === 'string') {
+              newValues.push(`'${value}'`);
             } else {
-              newValues.push('NULL');
+              newValues.push(value);
             }
-          } else if (typeof value === 'string') {
-            newValues.push(`'${value}'`);
-          } else {
-            newValues.push(value);
           }
-        }
-        return `(${newValues.join(', ')})`;
-      });
+          return `(${newValues.join(', ')})`;
+        })
+        .join(', ');
       const tamalapInsertionColumns = `(${columns[0].join(', ')})`;
       // KATEGTAM:
       const kategtam = responseData[1];
-      const kategtamValuesToInsert = kategtam.map(row => {
-        let newValues = [];
-        for (const [, value] of Object.entries(row)) {
-          if (
-            value === '-/-' ||
-            value === '-/' ||
-            value === '-' ||
-            value === '2099-12-31' ||
-            value === 999999999.999999
-          ) {
-            newValues.push('NULL');
-          } else if (typeof value === 'string') {
-            newValues.push(`'${value}'`);
-          } else {
-            newValues.push(value);
+      const kategtamValuesToInsert = kategtam
+        .map(row => {
+          let newValues = [];
+          for (const [, value] of Object.entries(row)) {
+            if (
+              value === '-/-' ||
+              value === '-/' ||
+              value === '-' ||
+              value === '2099-12-31' ||
+              value === 999999999.999999
+            ) {
+              newValues.push('NULL');
+            } else if (typeof value === 'string') {
+              newValues.push(`'${value}'`);
+            } else {
+              newValues.push(value);
+            }
           }
-        }
-        return `(${newValues.join(', ')})`;
-      }).join(', ');
+          return `(${newValues.join(', ')})`;
+        })
+        .join(', ');
       const kategtamInsertionColumns = `(${columns[1].join(', ')})`;
       // EUHOZZAR:
       const euhozzar = responseData[2];
-      const euhozzarValuesToInsert = euhozzar.map(row => {
-        let newValues = [];
-        for (const [name, value] of Object.entries(row)) {
-          if (
-            value === '-/-' ||
-            value === '-/' ||
-            value === '-' ||
-            value === '2099-12-31' ||
-            value === 999999999.999999
-          ) {
-            newValues.push('NULL');
-          } else if (typeof value === 'string') {
-            newValues.push(`'${value}'`);
-          } else {
-            // insetr EUPONT_ID as NULL if 0, due to foreign key constraint:
-            if (name === 'EUPONT_ID' && value === 0) {
+      const euhozzarValuesToInsert = euhozzar
+        .map(row => {
+          let newValues = [];
+          for (const [name, value] of Object.entries(row)) {
+            if (
+              value === '-/-' ||
+              value === '-/' ||
+              value === '-' ||
+              value === '2099-12-31' ||
+              value === 999999999.999999
+            ) {
               newValues.push('NULL');
+            } else if (typeof value === 'string') {
+              newValues.push(`'${value}'`);
+            } else {
+              // insetr EUPONT_ID as NULL if 0, due to foreign key constraint:
+              if (name === 'EUPONT_ID' && value === 0) {
+                newValues.push('NULL');
+              } else {
+                newValues.push(value);
+              }
             }
-            newValues.push(value);
           }
-        }
-        return `(${newValues.join(', ')})`;
-      }).join(', ');
+          return `(${newValues.join(', ')})`;
+        })
+        .join(', ');
       const euhozzarInsertionColumns = `(${columns[2].join(', ')})`;
+      //
+      // console.log(tamalapInsertionColumns);
+      // console.log('');
+      // console.log(tamalapValuesToInsert);
+      // console.log('');
+      // console.log(kategtamInsertionColumns);
+      // console.log('');
+      // console.log(kategtamValuesToInsert);
+      // console.log('');
+      // console.log(euhozzarInsertionColumns);
+      // console.log('');
+      // console.log(euhozzarValuesToInsert);
+      // return;
+      //
       try {
         // Transaction:
         await connection.beginTransaction(); // Begin transaction
@@ -185,25 +206,27 @@ export const doQuery = async (pool, responseData, table) => {
       const eupontokValuesToInsert = `(${eupontokValues.join(', ')})`;
       const eupontokInsertionColumns = `(${columns[0].join(', ')})`;
       // EUINDIKACIOK:
-      const euindikaciokValuesToInsert = responseData[1].map(row => {
-        let newValues = [];
-        for (const [, value] of Object.entries(row)) {
-          if (
-            value === '-/-' ||
-            value === '-/' ||
-            value === '-' ||
-            value === '2099-12-31' ||
-            value === 999999999.999999
-          ) {
-            newValues.push('NULL');
-          } else if (typeof value === 'string') {
-            newValues.push(`'${value}'`);
-          } else {
-            newValues.push(value);
+      const euindikaciokValuesToInsert = responseData[1]
+        .map(row => {
+          let newValues = [];
+          for (const [, value] of Object.entries(row)) {
+            if (
+              value === '-/-' ||
+              value === '-/' ||
+              value === '-' ||
+              value === '2099-12-31' ||
+              value === 999999999.999999
+            ) {
+              newValues.push('NULL');
+            } else if (typeof value === 'string') {
+              newValues.push(`'${value}'`);
+            } else {
+              newValues.push(value);
+            }
           }
-        }
-        return `(${newValues.join(', ')})`;
-      }).join(', ');
+          return `(${newValues.join(', ')})`;
+        })
+        .join(', ');
       const euindikaciokInsertionColumns = `(${columns[1].join(', ')})`;
       // BNOHOZZAR:
       const bnohozzarValues = [];
