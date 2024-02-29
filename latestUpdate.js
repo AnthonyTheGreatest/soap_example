@@ -11,7 +11,7 @@ export const pool = mysql.createPool({
 });
 
 const [results] = await pool.execute(
-  `SELECT MAX(ERV_DATUM) AS latest FROM KIHIRDETES`
+  `SELECT MAX(ERV_DATUM) AS latest FROM KIHIRDETES WHERE STATUS = 'E'`
 );
 const iso = results[0].latest;
 const date = new Date(iso);

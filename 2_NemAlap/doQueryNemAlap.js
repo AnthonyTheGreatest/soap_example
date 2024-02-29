@@ -14,6 +14,7 @@ export const doQuery = async (pool, responseData, table) => {
     return;
   }
   // A single connection for transactions:
+  // TODO: release connection after transaction at the end of the function
   const connection = await pool.getConnection();
   let valuesToInsert, insertionColumns;
   switch (name) {
@@ -341,4 +342,6 @@ export const doQuery = async (pool, responseData, table) => {
   } catch (error) {
     console.log('Error executing query:', error.message);
   }
+  // Close connection:
+  pool.releaseConnection(connection);
 };

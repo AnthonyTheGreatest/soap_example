@@ -1,5 +1,12 @@
 // Parsed response examples:
 
+const TERMEK_ID_LIST = [
+  60300994, 60301017,
+  60301018, 60301052,
+  60301053, 60301054,
+  60301055, 60301056 
+];
+
 const EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR = [
   [
     {
@@ -220,7 +227,7 @@ const TERMEK = [
     FORGALMAZ_ID: 194723,
     FORGALOMBAN: 1
   }
-]
+];
 
 const TAMALAP_KATEGTAM_EUHOZZAR = [
   [

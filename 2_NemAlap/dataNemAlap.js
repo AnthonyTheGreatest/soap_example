@@ -4,7 +4,7 @@ export const data = {
   KIHIRDETES: {
     name: 'KIHIRDETES',
     SOAPAction: 'KIHIRD',
-    // TODO: change date
+    // TODO: change date (?)
     xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                     <soapenv:Header/>
                     <soapenv:Body>
@@ -20,6 +20,7 @@ export const data = {
     // az azonosító szám előtt egy előjelet is tartalmazhat (+ vagy -)
     name: 'TERMEK_ID_LIST',
     SOAPAction: 'TERMEKLISTA',
+    // TODO: change filter
     xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -40,7 +41,7 @@ export const data = {
   TERMEK: {
     name: 'TERMEK',
     SOAPAction: 'TERMEKADAT',
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData2: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                   <soapenv:Header/>
                   <soapenv:Body>
                     <pup:COBJTERMEKADAT-TERMEKADATInput>
@@ -49,8 +50,7 @@ export const data = {
                   </soapenv:Body>
               </soapenv:Envelope>
               `,
-    // TODO: change to xmlData:
-    xmlData2:
+    xmlData:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -109,7 +109,7 @@ export const data = {
   TAMALAP_KATEGTAM_EUHOZZAR: {
     name: 'TAMALAP_KATEGTAM_EUHOZZAR',
     SOAPAction: 'TAMOGATADAT',
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData2: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                   <pup:COBJTAMOGAT-TAMOGATADATInput>
@@ -119,8 +119,7 @@ export const data = {
                 </soapenv:Body>
             </soapenv:Envelope>
             `,
-    // TODO: change to xmlData:
-    xmlData2:
+    xmlData:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
@@ -183,7 +182,7 @@ export const data = {
   EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR: {
     name: 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR',
     SOAPAction: 'TAMOGATEUPONT',
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData2: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                 <pup:COBJEUPONT-TAMOGATEUPONTInput>
@@ -191,7 +190,7 @@ export const data = {
                 </pup:COBJEUPONT-TAMOGATEUPONTInput>
                 </soapenv:Body>
             </soapenv:Envelope>`,
-    xmlData2:
+    xmlData:
       id => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
