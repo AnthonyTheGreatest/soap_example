@@ -29,7 +29,7 @@ export const data = {
                     <pup:SXFILTER-VARCHAR2-IN>
                         <![CDATA[
                           <alapfilter>
-                            <BRAND>XANAX</BRAND>
+                            <TERMKOD>G%</TERMKOD>
                           </alapfilter>
                           ]]>
                       </pup:SXFILTER-VARCHAR2-IN>

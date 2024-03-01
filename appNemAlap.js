@@ -13,7 +13,7 @@ export const pool = mysql.createPool({
   database: 'testdb',
   password: process.env.DB_PASSWORD,
   // TODO: connectionLimit?
-  connectionLimit: 100,
+  connectionLimit: 1000,
 });
 
 const idList = [];
@@ -62,6 +62,7 @@ const processTermekIdList = async () => {
         responseTextTamalap,
         data.TAMALAP_KATEGTAM_EUHOZZAR
       );
+      const empty = responseDataTamalap[0][0].ID === 999999999.999999;
       const eupontIdArr = responseDataTamalap[3];
       // EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR:
       const responseEupontokArr = [];
@@ -93,15 +94,17 @@ const processTermekIdList = async () => {
       //   const [result] = await pool.execute('SELECT COUNT(ID) AS ID_COUNT FROM TERMEK');
       //   console.log('Pool still open:', result[0].ID_COUNT);
       // }
-      // Why does the program hang here after fully processing 4 termekIds?
-      await doQuery(pool, responseDataTermek, data.TERMEK);
-      const tamalapQueryResult = await doQuery(
-        pool,
-        responseDataTamalap,
-        data.TAMALAP_KATEGTAM_EUHOZZAR
-      );
-      // Log query result (row count) for tamalap table only
-      console.log(tamalapQueryResult);
+      // Why does the program hang here?
+      const queryResult = await doQuery(pool, responseDataTermek, data.TERMEK);
+      // Log query result (row count) for termek table only:
+      console.log(queryResult);
+      if (!empty) {
+        await doQuery(
+          pool,
+          responseDataTamalap,
+          data.TAMALAP_KATEGTAM_EUHOZZAR
+        );
+      }
     }
   } catch (error) {
     console.log('Error processing termek ID list:', error);
@@ -114,7 +117,7 @@ const processTermekIdList = async () => {
 
 // Call one after the other:
 await processData(data.TERMEK_ID_LIST);
-console.log('Ids to be processed:', idList);
+console.log('Number od ids to be processed:', idList.length);
 await processTermekIdList();
 
 // await processTermekIdList();

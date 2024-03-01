@@ -10,8 +10,8 @@ export const doQuery = async (pool, responseData, table) => {
     return;
   }
   // A single connection for transactions:
-  // TODO: release connection after transaction
-//   const connection = await pool.getConnection();
+  // TODO: release connection after transaction at the end of the function
+  const connection = await pool.getConnection();
   let valuesToInsert, insertionColumns;
   switch (name) {
     case 'KIHIRDETES':
@@ -154,30 +154,28 @@ export const doQuery = async (pool, responseData, table) => {
       //
       try {
         // Transaction:
-        // await connection.beginTransaction(); // Begin transaction
+        await connection.beginTransaction(); // Begin transaction
 
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO TAMALAP ${tamalapInsertionColumns} VALUES ${tamalapValuesToInsert}`
         );
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO KATEGTAM ${kategtamInsertionColumns} VALUES ${kategtamValuesToInsert}`
         );
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO EUHOZZAR ${euhozzarInsertionColumns} VALUES ${euhozzarValuesToInsert}`
         );
 
-        // await connection.commit(); // Commit transaction
+        await connection.commit(); // Commit transaction
 
-        const [results] = await pool.execute(
+        const [results] = await connection.execute(
           'SELECT COUNT(*) as count FROM TAMALAP'
         );
         if (!results) throw new Error('No results found.');
         // Return number of rows in TAMALAP table only
-        // Close connection:
-        // await connection.release();
         return results[0].count;
       } catch (error) {
-        // await connection.rollback(); // Rollback transaction if error
+        await connection.rollback(); // Rollback transaction if error
         console.log(
           'Error executing query (TAMALA_KATEGTAM_EUHOZZAR):',
           error.message
@@ -237,7 +235,7 @@ export const doQuery = async (pool, responseData, table) => {
             newValues.push(value);
           }
           if (name === 'BNO_ID') {
-            const [results] = await pool.execute(
+            const [results] = await connection.execute(
               `SELECT ID as id FROM BNOKODOK WHERE KOD = '${value}'`
             );
             newValues.push(results[0].id);
@@ -254,7 +252,7 @@ export const doQuery = async (pool, responseData, table) => {
         const newValues = [];
         for (const [name, value] of Object.entries(row)) {
           if (name === 'SZAKVKOD') {
-            const [results] = await pool.execute(
+            const [results] = await connection.execute(
               `SELECT ID as id FROM SZAKVKODOK WHERE KOD = '${value}'`
             );
             newValues.push(results[0].id);
@@ -294,33 +292,31 @@ export const doQuery = async (pool, responseData, table) => {
       const eujoghozzarInsertionColumns = `(${columns[3].join(', ')})`;
       try {
         // Transaction:
-        // await connection.beginTransaction(); // Begin transaction
+        await connection.beginTransaction(); // Begin transaction
 
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO EUPONTOK ${eupontokInsertionColumns} VALUES ${eupontokValuesToInsert}`
         );
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO EUINDIKACIOK ${euindikaciokInsertionColumns} VALUES ${euindikaciokValuesToInsert}`
         );
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO BNOHOZZAR ${bnohozzarInsertionColumns} VALUES ${bnohozzarValuesToInsert}`
         );
-        await pool.execute(
+        await connection.execute(
           `INSERT INTO EUJOGHOZZAR ${eujoghozzarInsertionColumns} VALUES ${eujoghozzarValuesToInsert}`
         );
 
-        // await connection.commit(); // Commit transaction
+        await connection.commit(); // Commit transaction
 
-        const [results] = await pool.execute(
+        const [results] = await connection.execute(
           'SELECT COUNT(*) as count FROM EUPONTOK'
         );
         if (!results) throw new Error('No results found.');
         // Return number of rows in EUPONTOK table only
-        // Close connection:
-        // await connection.release();
         return results[0].count;
       } catch (error) {
-        // await connection.rollback(); // Rollback transaction if error
+        await connection.rollback(); // Rollback transaction if error
         console.log(
           'Error executing query (EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR):',
           error.message
@@ -342,4 +338,6 @@ export const doQuery = async (pool, responseData, table) => {
   } catch (error) {
     console.log('Error executing query:', error.message);
   }
+  // Close connection:
+  pool.releaseConnection(connection);
 };
