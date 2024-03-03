@@ -18,22 +18,26 @@ const processDataWithXmlDataArgument = async (table, arg) => {
     SOAPAction: table.SOAPAction,
     xmlData: table.xmlData(arg),
   });
-  //   console.log(responseText);
+  // console.log(responseText);
   const responseData = parseResponse(responseText, table);
-  //   console.log(responseData);
+  // console.log(responseData);
+  // (no data = [])
+  if (!responseData.length) return;
   const queryResult = await doQuery(pool1, responseData, table);
   console.log(queryResult);
 };
 
-// processData(data.ATCKONYV); // kész
-// processData(data.ISOKONYV); // kész
-// processData(data.BNOKODOK); // Lapozás
-// processData(data.BRAND); // kész
-// processData(data.CEGEK); // kész
-// processData(data.KIINTOR); // kész
-// processData(data.SZAKVKODOK); // kész
-// processData(data.ORVOSOK); // Lapozás
-// processData(data.NICHE); // kész
+// Call with static xmlData (for testing):
+
+// processData(data.ATCKONYV);
+// processData(data.ISOKONYV);
+// processData(data.BNOKODOK);
+// processData(data.BRAND);
+// processData(data.CEGEK);
+// processData(data.KIINTOR);
+// processData(data.SZAKVKODOK);
+// processData(data.ORVOSOK);
+// processData(data.NICHE);
 
 (async () => {
   try {
@@ -42,6 +46,16 @@ const processDataWithXmlDataArgument = async (table, arg) => {
         // Pass numbers 0-9 to the xmlData function
         for (let i = 0; i < 10; i++) {
           await processDataWithXmlDataArgument(data[table], i);
+        }
+        if (table === 'BNOKODOK') {
+          // Pass letters A-Z also
+          for (
+            let letter = 'A';
+            letter <= 'Z';
+            letter = String.fromCharCode(letter.charCodeAt(0) + 1)
+          ) {
+            await processDataWithXmlDataArgument(data[table], letter);
+          }
         }
         continue;
       }

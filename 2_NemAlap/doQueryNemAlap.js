@@ -240,6 +240,7 @@ export const doQuery = async (pool, responseData, table) => {
             const [results] = await pool.execute(
               `SELECT ID as id FROM BNOKODOK WHERE KOD = '${value}'`
             );
+            // TODO: if no result... (?)
             newValues.push(results[0].id);
           }
         }
