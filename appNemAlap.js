@@ -17,7 +17,7 @@ export const pool = mysql.createPool({
 });
 
 const idList = [];
-const singleTermekIdArr = [60300994];
+// const singleTermekIdArr = [60300994];
 
 const processData = async table => {
   const responseText = await makeRequest(table);
@@ -29,23 +29,26 @@ const processData = async table => {
   if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
 };
 
+const processDataWithXmlDataArgument = async (table, arg) => {
+  const responseText = await makeRequest({
+    SOAPAction: table.SOAPAction,
+    xmlData: table.xmlData(arg),
+  });
+  // console.log(responseText);
+  const responseData = parseResponse(responseText, table);
+  if (table.name === 'TERMEK_ID_LIST') idList.push(...responseData);
+  // console.log(responseData);
+  // (no data = [])
+  if (!responseData.length) return;
+  const queryResult = await doQuery(pool, responseData, table);
+  if (table.name !== 'TERMEK_ID_LIST') console.log(queryResult);
+};
+
 const processedEupontIdArr = [];
 
-// TODO: convert to transaction (remove) (?):
-
-// TODO: program hangs after a while (?)
-// TODO: remove logging
 const processTermekIdList = async () => {
   try {
     for (const id of idList) {
-      // skip ids...
-      // if (
-      //   id === 60300994 ||
-      //   id === 60301017 ||
-      //   id === 60301018 ||
-      //   id === 60301052
-      // )
-      //   continue;
       console.log('Processing termek ID:', id);
       // TERMEK:
       const responseTextTermek = await makeRequest({
@@ -89,12 +92,6 @@ const processTermekIdList = async () => {
           data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
         );
       }
-      // if (id === 60301053) {
-      //   console.log('responseDataTermek:', responseDataTermek);
-      //   const [result] = await pool.execute('SELECT COUNT(ID) AS ID_COUNT FROM TERMEK');
-      //   console.log('Pool still open:', result[0].ID_COUNT);
-      // }
-      // Why does the program hang here?
       const queryResult = await doQuery(pool, responseDataTermek, data.TERMEK);
       // Log query result (row count) for termek table only:
       console.log(queryResult);
@@ -114,11 +111,22 @@ const processTermekIdList = async () => {
 };
 
 // await processData(data.KIHIRDETES);
+// console.log('Waiting for 5 seconds...');
+// await new Promise(resolve => setTimeout(resolve, 5000));
 
-// Call one after the other:
-await processData(data.TERMEK_ID_LIST);
-console.log('Number od ids to be processed:', idList.length);
+// Call one after the other (with static xmlData):
+// await processData(data.TERMEK_ID_LIST);
+// console.log('Number of IDs to be processed:', idList.length);
+// await processTermekIdList();
+
+for (let i = 0; i <= 9; i++) {
+  await processDataWithXmlDataArgument(data.TERMEK_ID_LIST, i);
+  console.log('xmlData argument:', i);
+  console.log('Number of IDs in list:', idList.length);
+};
+console.log('Total number of IDs to be processed:', idList.length);
 await processTermekIdList();
+
 
 // await processTermekIdList();
 

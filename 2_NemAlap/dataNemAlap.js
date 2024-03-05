@@ -21,7 +21,7 @@ export const data = {
     name: 'TERMEK_ID_LIST',
     SOAPAction: 'TERMEKLISTA',
     // TODO: change filter
-    xmlData: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+    xmlData2: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
                 <soapenv:Header/>
                 <soapenv:Body>
                 <pup:COBJIDLISTA-TERMEKLISTAInput>
@@ -36,6 +36,22 @@ export const data = {
                   </pup:COBJIDLISTA-TERMEKLISTAInput>
                   </soapenv:Body>
               </soapenv:Envelope>`,
+    xmlData:
+      num => `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pup="http://xmlns.oracle.com/orawsv/PUPHAX/PUPHAXWS">
+                  <soapenv:Header/>
+                  <soapenv:Body>
+                  <pup:COBJIDLISTA-TERMEKLISTAInput>
+                      <pup:DSP-DATE-IN>${latestUpdate}</pup:DSP-DATE-IN>
+                      <pup:SXFILTER-VARCHAR2-IN>
+                          <![CDATA[
+                            <alapfilter>
+                              <TTT>%${num}</TTT>
+                            </alapfilter>
+                            ]]>
+                        </pup:SXFILTER-VARCHAR2-IN>
+                    </pup:COBJIDLISTA-TERMEKLISTAInput>
+                    </soapenv:Body>
+                </soapenv:Envelope>`,
     columns: [],
   },
   TERMEK: {

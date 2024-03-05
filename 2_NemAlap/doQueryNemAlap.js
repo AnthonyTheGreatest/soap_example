@@ -184,7 +184,8 @@ export const doQuery = async (pool, responseData, table) => {
         );
       }
       break;
-    case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
+      case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
+      // TODO: if no data for bnohozzar or eujoghozzar...
       // EUPONTOK:
       const eupontokValues = [];
       for (const [, value] of Object.entries(responseData[0][0])) {
