@@ -17,7 +17,6 @@ export const data = {
   },
   TERMEK_ID_LIST: {
     // (termék id (pk) lista)
-    // az azonosító szám előtt egy előjelet is tartalmazhat (+ vagy -)
     name: 'TERMEK_ID_LIST',
     SOAPAction: 'TERMEKLISTA',
     // TODO: change filter
@@ -202,7 +201,7 @@ export const data = {
                 <soapenv:Header/>
                 <soapenv:Body>
                 <pup:COBJEUPONT-TAMOGATEUPONTInput>
-                    <pup:NID-NUMBER-IN>99502</pup:NID-NUMBER-IN>
+                    <pup:NID-NUMBER-IN>100739</pup:NID-NUMBER-IN>
                 </pup:COBJEUPONT-TAMOGATEUPONTInput>
                 </soapenv:Body>
             </soapenv:Envelope>`,

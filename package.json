@@ -5,7 +5,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "my-script": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablak.js && node AppKihirdetes.js && node AppNemAlap.js",
+    "reset-db": "node resetDatabase.js && node createDatabasePuphax.js",
+    "reset-alap": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablak.js && node AppKihirdetes.js"
   },
   "keywords": [],
   "author": "",

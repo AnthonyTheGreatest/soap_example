@@ -11,7 +11,7 @@ export const doQuery = async (pool, responseData, table) => {
   }
   // A single connection for transactions:
   // TODO: release connection after transaction
-//   const connection = await pool.getConnection();
+  //   const connection = await pool.getConnection();
   let valuesToInsert, insertionColumns;
   switch (name) {
     case 'KIHIRDETES':
@@ -184,8 +184,7 @@ export const doQuery = async (pool, responseData, table) => {
         );
       }
       break;
-      case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
-      // TODO: if no data for bnohozzar or eujoghozzar...
+    case 'EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR':
       // EUPONTOK:
       const eupontokValues = [];
       for (const [, value] of Object.entries(responseData[0][0])) {
@@ -304,12 +303,17 @@ export const doQuery = async (pool, responseData, table) => {
         await pool.execute(
           `INSERT INTO EUINDIKACIOK ${euindikaciokInsertionColumns} VALUES ${euindikaciokValuesToInsert}`
         );
-        await pool.execute(
-          `INSERT INTO BNOHOZZAR ${bnohozzarInsertionColumns} VALUES ${bnohozzarValuesToInsert}`
-        );
-        await pool.execute(
-          `INSERT INTO EUJOGHOZZAR ${eujoghozzarInsertionColumns} VALUES ${eujoghozzarValuesToInsert}`
-        );
+        // if no data for bnohozzar or eujoghozzar, do not execute query:
+        if (responseData[2].length) {
+          await pool.execute(
+            `INSERT INTO BNOHOZZAR ${bnohozzarInsertionColumns} VALUES ${bnohozzarValuesToInsert}`
+          );
+        }
+        if (responseData[3].length) {
+          await pool.execute(
+            `INSERT INTO EUJOGHOZZAR ${eujoghozzarInsertionColumns} VALUES ${eujoghozzarValuesToInsert}`
+          );
+        }
 
         // await connection.commit(); // Commit transaction
 
