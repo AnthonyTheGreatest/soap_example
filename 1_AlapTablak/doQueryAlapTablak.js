@@ -1,4 +1,4 @@
-// const exampleData = [
+// const exampleResponseData = [
 //   { id: 'a', name: 'John', x: 'a' },
 //   { id: 'b', name: 'Alice', x: 'b' },
 //   { id: 'c', name: 'Bob', x: 'c' },
@@ -19,7 +19,13 @@ export const doQuery = async (pool, responseData, table) => {
         .map(
           row =>
             `(${Object.values(row)
-              .map(value => `'${value}'`)
+              .map(value => {
+                if (value === 'ÉRV' || value === 'ÉRVTL') {
+                  // randomize...
+                  value = '' + Math.floor(Math.random() * 100);
+                }
+                return `'${value}'`;
+              })
               .join(', ')})`
         )
         .join(', ');
@@ -142,8 +148,8 @@ export const doQuery = async (pool, responseData, table) => {
       console.log('No query defined for this table.');
       return;
   }
-    // console.log(insertionColumns);
-    // console.log(valuesToInsert);
+  // console.log(insertionColumns);
+  // console.log(valuesToInsert);
   const insertQuery = `INSERT INTO ${name} ${insertionColumns} VALUES ${valuesToInsert}`;
   const countQuery = `SELECT COUNT(*) as count FROM ${name}`;
   ////////////////////////////////
@@ -157,6 +163,7 @@ export const doQuery = async (pool, responseData, table) => {
     return results[0].count;
   } catch (error) {
     console.log('Error executing query:', error.message);
+    console.log(`Table "name": ${name}`);
     throw error;
   }
 };
