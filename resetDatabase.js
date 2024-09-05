@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
 });
 
-const databaseName = 'testdb';
+const databaseName = process.env.DB_DATABASE;
 
 export const resetDatabase = async () => {
   try {
@@ -18,7 +18,7 @@ export const resetDatabase = async () => {
       `CREATE SCHEMA ${databaseName} DEFAULT CHARACTER SET utf8 COLLATE utf8_hungarian_ci`
     );
     console.log(
-      'Database (schema) deleted and recreated. Next: create database structure.'
+      'Database (schema) deleted and recreated (empty).'
     );
     await pool.end();
   } catch (error) {

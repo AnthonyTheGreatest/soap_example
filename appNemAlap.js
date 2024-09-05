@@ -1,3 +1,5 @@
+// 100 IDs - 2:19
+
 // import { pool2 } from './pool.js';
 import { data } from './2_NemAlap/dataNemAlap.js';
 import { makeRequest } from './makeRequest.js';
@@ -5,12 +7,13 @@ import { parseResponse } from './2_NemAlap/parseResponseNemAlap.js';
 import { doQuery } from './2_NemAlap/doQueryNemAlap.js';
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import logDuration from './logDuration.js';
 dotenv.config();
 
 export const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  database: 'testdb',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
   // TODO: connectionLimit?
   connectionLimit: 1000,
@@ -47,6 +50,7 @@ const processDataWithXmlDataArgument = async (table, arg) => {
 const processedEupontIdArr = [];
 
 const processTermekIdList = async () => {
+  let startTime = new Date();
   try {
     for (const id of idList) {
       console.log('Processing termek ID:', id);
@@ -95,6 +99,11 @@ const processTermekIdList = async () => {
       const queryResult = await doQuery(pool, responseDataTermek, data.TERMEK);
       // Log query result (row count) for termek table only:
       console.log(queryResult);
+      if (!(queryResult % 10)) {
+        const endTime = new Date();
+        logDuration(startTime, endTime);
+        startTime = new Date();
+      }
       if (!empty) {
         await doQuery(
           pool,

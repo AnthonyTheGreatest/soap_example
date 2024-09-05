@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  database: 'testdb',
-  password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
 });
 
 const tables = [
@@ -247,7 +247,7 @@ export const createDatabase = async () => {
     for (const table of tables) {
         await pool.execute(table);
     }
-    console.log('Database created.');
+    console.log('Database structure created.');
     await pool.end();
   } catch (error) {
     console.error('Query error:', error);

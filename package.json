@@ -5,7 +5,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "my-script": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablak.js && node AppKihirdetes.js && node AppNemAlap.js",
+    "my-script-concurrent": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlapConcurrent.js",
+    "my-script-concurrent-chat": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlapConcurrentChatGPT.js",
+    "my-script": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlap.js",
+    "alap": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablak.js",
+    "alap-concurrent": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js",
     "reset-db": "node resetDatabase.js && node createDatabasePuphax.js",
     "reset-alap": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablak.js && node AppKihirdetes.js"
   },
@@ -22,6 +26,7 @@
     "http-digest-client": "^0.0.3",
     "mysql2": "^3.7.0",
     "node-fetch": "^3.3.2",
+    "p-limit": "^6.1.0",
     "xml2js": "^0.6.2"
   }
 }
