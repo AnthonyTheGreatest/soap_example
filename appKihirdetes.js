@@ -19,7 +19,8 @@ const processData = async table => {
   const responseData = parseResponse(responseText, table);
   // console.log(responseData);
   const queryResult = await doQuery(pool, responseData, table);
-  console.log(queryResult);
+  const logMessage = queryResult ? `${table.name} - Rowcount: ${queryResult}` : `${table.name} - No rows inserted.`
+  console.log(logMessage);
 };
 
 await processData(data.KIHIRDETES);

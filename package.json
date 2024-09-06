@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "my-script-concurrent": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlapConcurrent.js",
-    "my-script-concurrent-chat": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlapConcurrentChatGPT.js",
+    "my-script-chat": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlapConcurrentChatGPT.js",
     "my-script": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js && node AppKihirdetes.js && node AppNemAlap.js",
     "alap": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablak.js",
     "alap-concurrent": "node resetDatabase.js && node createDatabasePuphax.js && node appAlapTablakConcurrent.js",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@mhoc/axios-digest-auth": "^0.8.0",
     "@xmldom/xmldom": "^0.8.10",
+    "async-mutex": "^0.5.0",
     "axios": "^1.6.5",
     "crypto": "^1.0.1",
     "digest-fetch": "^3.1.1",

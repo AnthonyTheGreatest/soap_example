@@ -7,10 +7,11 @@ import { doQuery } from './2_NemAlap/doQueryNemAlap.js';
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import pLimit from 'p-limit';
+import { Mutex } from 'async-mutex';
 import logDuration from './logDuration.js';
 
 dotenv.config();
-
+const limit = pLimit(3);
 let startTime;
 
 export const pool = mysql.createPool({
@@ -23,8 +24,9 @@ export const pool = mysql.createPool({
 
 const idList = [];
 const processedEupontIdArr = []; //TODO: not compatible with concurrent processing...
+const mutex = new Mutex();
 
-// Function to process a single `TERMEK_ID_LIST` request
+// Fill 'idList' with IDs by given argument
 const processDataWithXmlDataArgument = async (table, arg) => {
   try {
     const responseText = await makeRequest({
@@ -41,17 +43,17 @@ const processDataWithXmlDataArgument = async (table, arg) => {
   }
 };
 
-// Function to process all `TERMEK_ID_LIST` requests concurrently
-const processAllTermekIdLists = async () => {
+// Fill 'idList' with every ID concurrently
+const fillIdList = async () => {
   const promises = [];
   for (let i = 0; i <= 9; i++) {
-    promises.push(processDataWithXmlDataArgument(data.TERMEK_ID_LIST, i));
+    promises.push(limit(() => processDataWithXmlDataArgument(data.TERMEK_ID_LIST, i)));
   }
   await Promise.all(promises);
   console.log('Total number of IDs to be processed:', idList.length);
 };
 
-const processTermekId = async id => {
+const processSingleId = async id => {
   try {
     console.log('Processing termek ID:', id);
 
@@ -83,8 +85,17 @@ const processTermekId = async id => {
     // 3. Insert into the child tables EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
     const responseEupontokArr = [];
     for (const eupontId of eupontIdArr) {
-      if (processedEupontIdArr.includes(eupontId)) continue;
-      processedEupontIdArr.push(eupontId);
+      
+      // Without mutex:
+      // if (processedEupontIdArr.includes(eupontId)) continue;
+      // processedEupontIdArr.push(eupontId);
+
+      // With mutex:
+      await mutex.runExclusive(async () => {
+        if (processedEupontIdArr.includes(eupontId)) return;
+        processedEupontIdArr.push(eupontId);
+      });
+
       const responseTextEupont = await makeRequest({
         SOAPAction: data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.SOAPAction,
         xmlData:
@@ -115,86 +126,84 @@ const processTermekId = async id => {
 
 // Function to process a single `termek ID`
 // Does not work
-const processTermekIdOld = async id => {
-  try {
-    console.log('Processing termek ID:', id);
+// const processTermekIdOld = async id => {
+//   try {
+//     console.log('Processing termek ID:', id);
 
-    // TERMEK:
-    const responseTextTermek = await makeRequest({
-      SOAPAction: data.TERMEK.SOAPAction,
-      xmlData: data.TERMEK.xmlData(id),
-    });
-    const responseDataTermek = parseResponse(responseTextTermek, data.TERMEK);
+//     // TERMEK:
+//     const responseTextTermek = await makeRequest({
+//       SOAPAction: data.TERMEK.SOAPAction,
+//       xmlData: data.TERMEK.xmlData(id),
+//     });
+//     const responseDataTermek = parseResponse(responseTextTermek, data.TERMEK);
 
-    // TAMALAP_KATEGTAM_EUHOZZAR:
-    const responseTextTamalap = await makeRequest({
-      SOAPAction: data.TAMALAP_KATEGTAM_EUHOZZAR.SOAPAction,
-      xmlData: data.TAMALAP_KATEGTAM_EUHOZZAR.xmlData(id),
-    });
-    const responseDataTamalap = parseResponse(
-      responseTextTamalap,
-      data.TAMALAP_KATEGTAM_EUHOZZAR
-    );
-    const empty = responseDataTamalap[0][0].ID === 999999999.999999;
-    const eupontIdArr = responseDataTamalap[3];
+//     // TAMALAP_KATEGTAM_EUHOZZAR:
+//     const responseTextTamalap = await makeRequest({
+//       SOAPAction: data.TAMALAP_KATEGTAM_EUHOZZAR.SOAPAction,
+//       xmlData: data.TAMALAP_KATEGTAM_EUHOZZAR.xmlData(id),
+//     });
+//     const responseDataTamalap = parseResponse(
+//       responseTextTamalap,
+//       data.TAMALAP_KATEGTAM_EUHOZZAR
+//     );
+//     const empty = responseDataTamalap[0][0].ID === 999999999.999999;
+//     const eupontIdArr = responseDataTamalap[3];
 
-    // EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR:
-    const responseEupontokArr = [];
-    for (const eupontId of eupontIdArr) {
-      if (processedEupontIdArr.includes(eupontId)) continue;
-      processedEupontIdArr.push(eupontId);
-      const responseTextEupont = await makeRequest({
-        SOAPAction: data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.SOAPAction,
-        xmlData:
-          data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.xmlData(eupontId),
-      });
-      const responseDataEupont = parseResponse(
-        responseTextEupont,
-        data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
-      );
-      responseEupontokArr.push(responseDataEupont);
-    }
+//     // EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR:
+//     const responseEupontokArr = [];
+//     for (const eupontId of eupontIdArr) {
+//       if (processedEupontIdArr.includes(eupontId)) continue;
+//       processedEupontIdArr.push(eupontId);
+//       const responseTextEupont = await makeRequest({
+//         SOAPAction: data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.SOAPAction,
+//         xmlData:
+//           data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR.xmlData(eupontId),
+//       });
+//       const responseDataEupont = parseResponse(
+//         responseTextEupont,
+//         data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
+//       );
+//       responseEupontokArr.push(responseDataEupont);
+//     }
 
-    // Queries:
-    const queries = [];
-    for (const eupontData of responseEupontokArr) {
-      queries.push(
-        doQuery(
-          pool,
-          eupontData,
-          data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
-        )
-      );
-    }
-    queries.push(doQuery(pool, responseDataTermek, data.TERMEK));
-    if (!empty) {
-      queries.push(
-        doQuery(pool, responseDataTamalap, data.TAMALAP_KATEGTAM_EUHOZZAR)
-      );
-    }
+//     // Queries:
+//     const queries = [];
+//     for (const eupontData of responseEupontokArr) {
+//       queries.push(
+//         doQuery(
+//           pool,
+//           eupontData,
+//           data.EUPONTOK_EUINDIKACIOK_BNOHOZZAR_EUJOGHOZZAR
+//         )
+//       );
+//     }
+//     queries.push(doQuery(pool, responseDataTermek, data.TERMEK));
+//     if (!empty) {
+//       queries.push(
+//         doQuery(pool, responseDataTamalap, data.TAMALAP_KATEGTAM_EUHOZZAR)
+//       );
+//     }
 
-    await Promise.all(queries);
+//     await Promise.all(queries);
 
-    // Log query result for termek table
-    console.log('Completed processing termek ID:', id);
-  } catch (error) {
-    console.error('Error processing termek ID:', id, error);
-  }
-};
+//     // Log query result for termek table
+//     console.log('Completed processing termek ID:', id);
+//   } catch (error) {
+//     console.error('Error processing termek ID:', id, error);
+//   }
+// };
 
 // Function to process all `termek IDs` concurrently
 const processTermekIdList = async () => {
-  const limit = pLimit(3);
-  const promises = idList.map(id => limit(() => processTermekId(id)));
+  const promises = idList.map(id => limit(() => processSingleId(id)));
   await Promise.all(promises);
   console.log('All termek IDs processed');
 };
 
 // Main execution flow
-await processAllTermekIdLists();
+await fillIdList();
 startTime = new Date();
 await processTermekIdList();
 
-// Close the pool and exit the process
 pool.end();
 process.exit();

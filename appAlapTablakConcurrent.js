@@ -14,7 +14,8 @@ const processData = async table => {
   const responseData = parseResponse(responseText, table);
   // console.log(responseData);
   const queryResult = await doQuery(pool1, responseData, table);
-  console.log(queryResult);
+  const logMessage = queryResult ? `${table.name} - Rowcount: ${queryResult}` : `${table.name} - No rows inserted.`
+  console.log(logMessage);
 };
 
 const processDataWithXmlDataArgument = async (table, arg) => {
@@ -28,7 +29,8 @@ const processDataWithXmlDataArgument = async (table, arg) => {
   // (no data = [])
   if (!responseData.length) return;
   const queryResult = await doQuery(pool1, responseData, table);
-  console.log(queryResult);
+  const logMessage = queryResult ? `${table.name}(argument: ${arg}) - Rowcount: ${queryResult}` : `${table.name}(argument: ${arg}) - No rows inserted.`
+  console.log(logMessage);
 };
 
 // Call with static xmlData (for testing):
